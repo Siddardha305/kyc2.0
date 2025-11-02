@@ -118,10 +118,10 @@ export default function KycAddress({ state, persist }) {
       <Box>
         {/* Progress Header */}
         <Paper elevation={0} sx={{ 
-          p: 3, 
-          mb: 3, 
+          p: 1.6, 
+          mb: 2, 
           background: 'linear-gradient(135deg, #f5f7fa 0%, #e3e8f0 100%)',
-          borderRadius: 3
+          borderRadius: 1.1
         }}>
           <Stack spacing={2}>
             <Typography variant="h5" fontWeight={600} color="primary">
@@ -156,9 +156,9 @@ export default function KycAddress({ state, persist }) {
           </Stack>
         </Paper>
 
-        <Card sx={{ borderRadius: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.08)' }}>
-          <CardContent sx={{ p: 4 }}>
-            <Stack spacing={4}>
+        <Card sx={{ borderRadius: 1.1, boxShadow: '0 8px 32px rgba(0, 0, 0, 0)' }}>
+          <CardContent sx={{ p: 1 }}>
+            <Stack spacing={2.2}>
               {/* Address Field */}
               <TextField
                 multiline
@@ -169,7 +169,6 @@ export default function KycAddress({ state, persist }) {
                 onChange={e => setL('address', e.target.value)}
                 onBlur={handleBlur('address')}
                 error={!!errors.address && touched.address}
-                helperText={errors.address || "Your full residential address including house number, street, and area"}
                 color={getFieldColor('address')}
                 fullWidth
                 InputProps={{
@@ -181,7 +180,7 @@ export default function KycAddress({ state, persist }) {
                 }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: 2,
+                    borderRadius: 1.1,
                     alignItems: 'flex-start'
                   },
                   '& .MuiInputAdornment-root': {
@@ -190,7 +189,7 @@ export default function KycAddress({ state, persist }) {
                 }}
               />
 
-              <Grid container spacing={3}>
+              <Grid container spacing={1.6}>
                 {/* City */}
                 <Grid item xs={12} sm={6}>
                   <TextField
@@ -199,7 +198,6 @@ export default function KycAddress({ state, persist }) {
                     onChange={e => setL('city', e.target.value)}
                     onBlur={handleBlur('city')}
                     error={!!errors.city && touched.city}
-                    helperText={errors.city || "Your city of residence"}
                     color={getFieldColor('city')}
                     fullWidth
                     InputProps={{
@@ -211,7 +209,7 @@ export default function KycAddress({ state, persist }) {
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
+                        borderRadius: 1.1,
                       }
                     }}
                   />
@@ -227,7 +225,6 @@ export default function KycAddress({ state, persist }) {
                     }
                     onBlur={handleBlur('pincode')}
                     error={!!errors.pincode && touched.pincode}
-                    helperText={errors.pincode || "6-digit postal code"}
                     color={getFieldColor('pincode')}
                     fullWidth
                     InputProps={{
@@ -239,7 +236,7 @@ export default function KycAddress({ state, persist }) {
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
+                        borderRadius: 1.1,
                       }
                     }}
                   />
@@ -255,7 +252,6 @@ export default function KycAddress({ state, persist }) {
                     onChange={e => setL('state', e.target.value)}
                     onBlur={handleBlur('state')}
                     error={!!errors.state && touched.state}
-                    helperText={errors.state || "Select your state"}
                     color={getFieldColor('state')}
                     InputProps={{
                       startAdornment: (
@@ -270,14 +266,14 @@ export default function KycAddress({ state, persist }) {
                         PaperProps: { 
                           style: { 
                             maxHeight: 280,
-                            borderRadius: 8
+                            borderRadius: 1.1
                           } 
                         } 
                       },
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
+                        borderRadius: 1.1,
                       }
                     }}
                   >
@@ -309,7 +305,7 @@ export default function KycAddress({ state, persist }) {
                     color="success"
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
+                        borderRadius: 1.1,
                         backgroundColor: 'success.50'
                       }
                     }}
@@ -326,7 +322,6 @@ export default function KycAddress({ state, persist }) {
                     }
                     onBlur={handleBlur('mobile')}
                     error={!!errors.mobile && touched.mobile}
-                    helperText={errors.mobile || "10-digit mobile number for verification"}
                     color={getFieldColor('mobile')}
                     fullWidth
                     InputProps={{
@@ -338,7 +333,7 @@ export default function KycAddress({ state, persist }) {
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
+                        borderRadius: 1.1,
                       }
                     }}
                   />
@@ -352,7 +347,6 @@ export default function KycAddress({ state, persist }) {
                     onChange={e => setL('email', e.target.value)}
                     onBlur={handleBlur('email')}
                     error={!!errors.email && touched.email}
-                    helperText={errors.email || "Your email address for communication"}
                     color={getFieldColor('email')}
                     fullWidth
                     InputProps={{
@@ -364,7 +358,7 @@ export default function KycAddress({ state, persist }) {
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
+                        borderRadius: 1.1,
                       }
                     }}
                   />
@@ -378,7 +372,7 @@ export default function KycAddress({ state, persist }) {
                     severity="success"
                     variant="outlined"
                     sx={{
-                      borderRadius: 2,
+                      borderRadius: 1.1,
                       border: '1px solid',
                     }}
                   >
@@ -388,14 +382,14 @@ export default function KycAddress({ state, persist }) {
               )}
 
               {/* Action Buttons */}
-              <Stack direction="row" justifyContent="space-between" spacing={2}>
+              <Stack direction="row" justifyContent="space-between" spacing={1}>
                 <Button 
                   startIcon={<ArrowBackIcon />} 
                   variant="outlined" 
                   onClick={back}
                   sx={{
                     height: 48,
-                    borderRadius: 2,
+                    borderRadius: 1.1,
                     minWidth: 120,
                     fontWeight: 600
                   }}
@@ -410,7 +404,7 @@ export default function KycAddress({ state, persist }) {
                   sx={{
                     minWidth: 140,
                     height: 48,
-                    borderRadius: 2,
+                    borderRadius: 1.1,
                     fontSize: '1rem',
                     fontWeight: 600,
                     background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',

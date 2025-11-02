@@ -53,13 +53,13 @@ export default function KycContainer({ state, persist, onLogout, navigateTo }) {
           <Card
             variant="outlined"
             sx={{
-              borderRadius: 3,
-              p: 1.5,
+              borderRadius: 1.2,
+              p: 1.9,
               position: { xs: 'static', md: 'sticky' },
               top: { md: 24 },
             }}
           >
-            <Stack spacing={1.25}>
+            <Stack spacing={1}>
               {steps.map((s, idx) => {
                 const active = kycSubStep === s.id
                 const done = !!kycSubStepStatus[s.id]
@@ -74,7 +74,7 @@ export default function KycContainer({ state, persist, onLogout, navigateTo }) {
                     sx={{
                       justifyContent: 'flex-start',
                       textTransform: 'none',
-                      borderRadius: 3,
+                      borderRadius: 1,
                       px: 1.25,
                       py: 1,
                       gap: 1.25,
@@ -82,7 +82,7 @@ export default function KycContainer({ state, persist, onLogout, navigateTo }) {
                       border: '1.5px solid',
                       borderColor: active ? 'transparent' : '#175ee2',
                       background: active
-                        ? 'linear-gradient(90deg, #175ee2 0%, #7d2ae8 100%)'
+                        ? 'linear-gradient(90deg, #175ee2 0%, #2a6de8ff 100%)'
                         : 'transparent',
                       color: active ? '#fff' : '#175ee2',
                       boxShadow: active ? '0 10px 18px rgba(23,94,226,.22)' : 'none',
@@ -90,9 +90,9 @@ export default function KycContainer({ state, persist, onLogout, navigateTo }) {
                       transition: 'all .22s ease',
                       '&:hover': {
                         background: active
-                          ? 'linear-gradient(90deg, #154dd1 0%, #6c25d6 100%)'
+                          ? 'linear-gradient(90deg, #154dd1 0%, #2a6de898 100%)'
                           : 'rgba(23,94,226,.06)',
-                        transform: unlocked ? 'translateX(3px)' : 'none',
+                        transform: unlocked ? 'translateX(1px)' : 'none',
                       },
                     }}
                   >
@@ -138,7 +138,7 @@ export default function KycContainer({ state, persist, onLogout, navigateTo }) {
         <Grid item xs={12} md={9}>
           <Card
             sx={{
-              borderRadius: 3,
+              borderRadius: 1,
               boxShadow: '0 8px 28px rgba(0,0,0,.06)',
               border: '1px solid',
               borderColor: 'divider',
@@ -152,7 +152,7 @@ export default function KycContainer({ state, persist, onLogout, navigateTo }) {
               }
               sx={{
                 px: { xs: 2, md: 3 },
-                py: 2,
+                py: 3,
                 borderBottom: '1px solid',
                 borderColor: 'divider',
               }}

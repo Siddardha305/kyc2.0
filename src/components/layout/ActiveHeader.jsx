@@ -5,10 +5,6 @@ import PersonIcon from '@mui/icons-material/Person'
 export default function ActiveHeader({ state, onLogout }) {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  
-  const female = "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=80&auto=format"
-  const male = "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?q=80&w=80&auto=format"
-  const src = state.userData?.kyc?.gender === 'female' ? female : male
 
   const getWelcomeMessage = () => {
     const hour = new Date().getHours()
@@ -36,12 +32,12 @@ export default function ActiveHeader({ state, onLogout }) {
     <Paper 
       elevation={0}
       sx={{
-        p: 3,
-        mb: 4,
+        p: 4,
+        mb: 3,
         background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
         border: '1px solid',
         borderColor: 'grey.200',
-        borderRadius: 3,
+        borderRadius: 1.1,
         boxShadow: '0 4px 20px rgba(0,0,0,0.06)'
       }}
     >
@@ -59,15 +55,15 @@ export default function ActiveHeader({ state, onLogout }) {
           sx={{ width: isMobile ? '100%' : 'auto' }}
         >
           <Avatar 
-            src={src} 
             sx={{ 
               width: 64, 
               height: 64,
               border: `3px solid ${theme.palette.primary.main}`,
-              boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)'
+              boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)',
+              backgroundColor: theme.palette.primary.main
             }}
           >
-            <PersonIcon sx={{ fontSize: 32 }} />
+            <PersonIcon sx={{ fontSize: 32, color: 'white' }} />
           </Avatar>
           
           <Box>
@@ -100,7 +96,7 @@ export default function ActiveHeader({ state, onLogout }) {
                 size="small"
                 sx={{ 
                   fontSize: '0.75rem',
-                  height: 28,
+                  height: 30,
                   backgroundColor: theme.palette.success.main,
                   color: 'white'
                 }}
@@ -128,7 +124,7 @@ export default function ActiveHeader({ state, onLogout }) {
           variant="outlined"
           onClick={onLogout}
           sx={{
-            borderRadius: 2,
+            borderRadius: 1.1,
             fontWeight: 600,
             borderColor: 'error.main',
             color: 'error.main',

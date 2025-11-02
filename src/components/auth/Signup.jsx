@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import {
   Alert, Avatar, Button, Card, CardActions, CardContent, CardHeader, InputAdornment,
   Paper, Stack, TextField, Typography, Box, LinearProgress, Fade,
-  useTheme, useMediaQuery, CircularProgress, IconButton,
-  Dialog, DialogTitle, DialogContent, DialogActions
+  useTheme, useMediaQuery, CircularProgress
 } from '@mui/material'
 import VerifiedIcon from '@mui/icons-material/Verified'
 import EmailIcon from '@mui/icons-material/Email'
@@ -12,8 +11,6 @@ import LockIcon from '@mui/icons-material/Lock'
 import PersonIcon from '@mui/icons-material/Person'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import RefreshIcon from '@mui/icons-material/Refresh'
-import ClearIcon from '@mui/icons-material/Clear'
-import DeleteIcon from '@mui/icons-material/Delete'
 import { userExists, saveCurrentSession, saveUserProgress } from '../../utils/storage'
 import { isEmail, isPhone } from '../../utils/validation'
 import { getInitialState } from '../../rootState.js'
@@ -24,7 +21,7 @@ export default function Signup({ state, persist, setState }) {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const isTablet = useMediaQuery(theme.breakpoints.down('md'))
-  
+
   const [form, setForm] = useState({ name: '', email: '', mobile: '', password: '', confirm: '' })
   const [sending, setSending] = useState({ email: false, mobile: false })
   const [verifying, setVerifying] = useState({ email: false, mobile: false })
@@ -33,20 +30,19 @@ export default function Signup({ state, persist, setState }) {
   const [touched, setTouched] = useState({})
   const [verified, setVerified] = useState({ email: false, mobile: false })
   const [progress, setProgress] = useState(0)
-  const [clearDialogOpen, setClearDialogOpen] = useState(false)
   const mounted = useRef(false)
 
   // Calculate form completion progress
   useEffect(() => {
     let completed = 0
     const total = 5 // name, email, mobile, password, confirm
-    
+
     if (form.name.trim()) completed++
     if (isEmail(form.email)) completed++
     if (isPhone(form.mobile)) completed++
     if (form.password.length >= 8) completed++
     if (form.confirm && form.password === form.confirm) completed++
-    
+
     setProgress((completed / total) * 100)
   }, [form])
 
@@ -58,7 +54,7 @@ export default function Signup({ state, persist, setState }) {
       verified,
       ...next,
     }
-    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(payload)) } catch {}
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(payload)) } catch { }
   }
 
   const loadDraft = () => {
@@ -69,11 +65,11 @@ export default function Signup({ state, persist, setState }) {
       if (data?.form) setForm(prev => ({ ...prev, ...data.form }))
       if (data?.otp) setOtp(prev => ({ ...prev, ...data.otp }))
       if (data?.verified) setVerified(prev => ({ ...prev, ...data.verified }))
-    } catch {}
+    } catch { }
   }
 
-  const clearDraft = () => { 
-    try { localStorage.removeItem(DRAFT_KEY) } catch {} 
+  const clearDraft = () => {
+    try { localStorage.removeItem(DRAFT_KEY) } catch { }
   }
 
   // Rehydrate once on mount
@@ -115,30 +111,6 @@ export default function Signup({ state, persist, setState }) {
     }
   }
 
-  // ---- Clear Data Function ----
-  const handleClearData = () => {
-    // Reset all form states
-    setForm({ name: '', email: '', mobile: '', password: '', confirm: '' })
-    setOtp({ email: '', mobile: '' })
-    setErrors({})
-    setTouched({})
-    setVerified({ email: false, mobile: false })
-    setProgress(0)
-    
-    // Clear from localStorage
-    clearDraft()
-    
-    // Close dialog
-    setClearDialogOpen(false)
-    
-    // Reset parent state if needed
-    persist(s => ({ 
-      ...s, 
-      emailVerified: false, 
-      mobileVerified: false 
-    }))
-  }
-
   // ---- OTP send/verify ----
   const sendEmailOtp = async () => {
     setSending(p => ({ ...p, email: true }))
@@ -158,7 +130,7 @@ export default function Signup({ state, persist, setState }) {
     setVerifying(p => ({ ...p, email: true }))
     // Simulate verification
     await new Promise(resolve => setTimeout(resolve, 800))
-    
+
     if (otp.email === '123456') {
       persist(s => ({ ...s, emailVerified: true }))
       setVerified(v => ({ ...v, email: true }))
@@ -173,7 +145,7 @@ export default function Signup({ state, persist, setState }) {
   const verifyMobileOtp = async () => {
     setVerifying(p => ({ ...p, mobile: true }))
     await new Promise(resolve => setTimeout(resolve, 800))
-    
+
     if (otp.mobile === '654321') {
       persist(s => ({ ...s, mobileVerified: true }))
       setVerified(v => ({ ...v, mobile: true }))
@@ -185,13 +157,13 @@ export default function Signup({ state, persist, setState }) {
     setVerifying(p => ({ ...p, mobile: false }))
   }
 
-  const canContinue = (state?.emailVerified || verified.email) && 
-                     (state?.mobileVerified || verified.mobile) &&
-                     form.name && 
-                     isEmail(form.email) && 
-                     isPhone(form.mobile) && 
-                     form.password.length >= 8 && 
-                     form.password === form.confirm
+  const canContinue = (state?.emailVerified || verified.email) &&
+    (state?.mobileVerified || verified.mobile) &&
+    form.name &&
+    isEmail(form.email) &&
+    isPhone(form.mobile) &&
+    form.password.length >= 8 &&
+    form.password === form.confirm
 
   // ---- Continue ----
   const handleContinue = async () => {
@@ -203,12 +175,12 @@ export default function Signup({ state, persist, setState }) {
     if (form.password !== form.confirm) errs.confirm = 'Passwords do not match'
     if (userExists(form.email)) errs.email = 'An account with this email already exists'
     if (userExists(form.mobile)) errs.mobile = 'An account with this phone number already exists'
-    
+
     setTouched({
       name: true, email: true, mobile: true, password: true, confirm: true
     })
     setErrors(errs)
-    
+
     if (Object.keys(errs).length) return
 
     // Simulate processing
@@ -242,35 +214,39 @@ export default function Signup({ state, persist, setState }) {
     return 'primary'
   }
 
-  // Check if there's any data to clear
-  const hasData = form.name || form.email || form.mobile || form.password || form.confirm || 
-                  otp.email || otp.mobile || verified.email || verified.mobile
-
   return (
-    <>
-      <Box sx={{ 
-        minHeight: '100vh', 
-        py: 4,
-        px: 2
+    <Box sx={{
+      minHeight: '100vh',
+      py: { xs: 2, sm: 3, md: 4 },
+      px: { xs: 1, sm: 2 }
+    }}>
+      <Box sx={{
+        maxWidth: 1200,
+        margin: '0 auto',
+        width: '100%'
       }}>
-        <Box sx={{ 
-          maxWidth: 1200, 
-          margin: '0 auto'
-        }}>
-          <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="stretch">
-            {/* Hero Section - No Animation */}
-            <Paper elevation={8} sx={{ 
-              p: { xs: 3, md: 4 }, 
-              bgcolor: 'primary.main', 
-              background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)', 
-              color: '#fff', 
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          spacing={{ xs: 2, sm: 3, md: 4 }}
+          alignItems="stretch"
+          sx={{ width: '100%' }}
+        >
+          {/* Hero Section */}
+          <Paper
+            elevation={8}
+            sx={{
+              p: { xs: 2, sm: 3, md: 4 },
+              bgcolor: 'primary.main',
+              background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
+              color: '#fff',
               flex: { xs: 1, md: 0.45 },
-              borderRadius: 4,
+              borderRadius: { xs: 2, sm: 3, md: 1 },
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
               position: 'relative',
               overflow: 'hidden',
+              minHeight: { xs: 300, md: 'auto' },
               '&::before': {
                 content: '""',
                 position: 'absolute',
@@ -281,124 +257,185 @@ export default function Signup({ state, persist, setState }) {
                 borderRadius: '50%',
                 background: 'rgba(255,255,255,0.1)'
               }
-            }}>
-              <Box sx={{ position: 'relative', zIndex: 1 }}>
-                <Stack alignItems="center" spacing={3} textAlign="center">
-                  <Avatar sx={{ 
-                    width: 80, 
-                    height: 80, 
-                    bgcolor: 'rgba(255,255,255,0.2)',
-                    backdropFilter: 'blur(10px)'
-                  }}>
-                    <VerifiedIcon sx={{ fontSize: 40 }} />
-                  </Avatar>
-                  <Typography variant="h4" fontWeight={800} gutterBottom>
-                    Secure Digital Onboarding
-                  </Typography>
-                  <Typography variant="h6" sx={{ opacity: 0.9, fontWeight: 300 }}>
-                    Join thousands of users in our secure platform
-                  </Typography>
-                  <Box sx={{ mt: 2 }}>
-                    {[1, 2, 3].map((item) => (
-                      <Stack key={item} direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-                        <CheckCircleIcon sx={{ fontSize: 20, opacity: 0.9 }} />
-                        <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                          {['Bank-level security', 'Instant verification', '24/7 Support'][item - 1]}
-                        </Typography>
-                      </Stack>
-                    ))}
-                  </Box>
-                </Stack>
-              </Box>
-            </Paper>
-
-            {/* Form Section - Keep Fade animation */}
-            <Fade in timeout={1000}>
-              <Card sx={{ 
-                flex: 1, 
-                borderRadius: 4,
-                boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                backdropFilter: 'blur(10px)'
-              }}>
-                <CardHeader 
-                  title={
-                    <Typography variant="h4" fontWeight={700} color="primary">
-                      Create Your Account
-                    </Typography>
-                  } 
-                  subheader={
-                    <Typography variant="body1" color="text.secondary">
-                      Complete your profile to begin the verification process
-                    </Typography>
-                  }
-                  action={
-                    hasData && (
-                      <IconButton 
-                        onClick={() => setClearDialogOpen(true)}
-                        color="error"
-                        title="Clear all data"
+            }}
+          >
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Stack
+                alignItems="center"
+                spacing={{ xs: 2, md: 3 }}
+                textAlign="center"
+                sx={{ width: '100%' }}
+              >
+                <Avatar sx={{
+                  width: { xs: 60, md: 80 },
+                  height: { xs: 60, md: 80 },
+                  bgcolor: 'rgba(255,255,255,0.2)',
+                  backdropFilter: 'blur(10px)'
+                }}>
+                  <VerifiedIcon sx={{ fontSize: { xs: 30, md: 40 } }} />
+                </Avatar>
+                <Typography
+                  variant={isMobile ? "h5" : "h4"}
+                  fontWeight={800}
+                  gutterBottom
+                  sx={{ fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' } }}
+                >
+                  Secure Digital Onboarding
+                </Typography>
+                <Typography
+                  variant={isMobile ? "body1" : "h6"}
+                  sx={{
+                    opacity: 0.9,
+                    fontWeight: 300,
+                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.25rem' }
+                  }}
+                >
+                  Join thousands of users in our secure platform
+                </Typography>
+                <Box sx={{ mt: { xs: 1, md: 2 } }}>
+                  {[1, 2, 3].map((item) => (
+                    <Stack
+                      key={item}
+                      direction="row"
+                      spacing={1}
+                      alignItems="center"
+                      sx={{ mb: 1 }}
+                    >
+                      <CheckCircleIcon sx={{ fontSize: { xs: 18, md: 20 }, opacity: 0.9 }} />
+                      <Typography
+                        variant="body2"
                         sx={{
-                          '&:hover': {
-                            backgroundColor: 'error.light',
-                            color: 'white'
-                          }
+                          opacity: 0.9,
+                          fontSize: { xs: '0.8rem', sm: '0.875rem' }
                         }}
                       >
-                        <ClearIcon />
-                      </IconButton>
-                    )
+                        {['Bank-level security', 'Instant verification', '24/7 Support'][item - 1]}
+                      </Typography>
+                    </Stack>
+                  ))}
+                </Box>
+              </Stack>
+            </Box>
+          </Paper>
+
+          {/* Form Section */}
+          <Fade in timeout={1000}>
+            <Card
+              sx={{
+                flex: 1,
+                borderTopRightRadius: 15,    
+                borderBottomRightRadius: 15,  
+                borderTopLeftRadius: { xs: 8, sm: 12, md: 16 },   
+                borderBottomLeftRadius: { xs: 8, sm: 12, md: 16 },
+                boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                backdropFilter: 'blur(10px)',
+                minWidth: 0
+              }}
+
+            >
+              <CardHeader
+                title={
+                  <Typography
+                    variant={isMobile ? "h5" : "h4"}
+                    fontWeight={700}
+                    color="primary"
+                    sx={{ fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' } }}
+                  >
+                    Create Your Account
+                  </Typography>
+                }
+                subheader={
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
+                  >
+                    Complete your profile to begin the verification process
+                  </Typography>
+                }
+                sx={{
+                  px: { xs: 2, sm: 3 },
+                  pt: { xs: 2, sm: 3 },
+                  '& .MuiCardHeader-content': {
+                    width: '100%'
                   }
-                />
-                
-                {/* Progress Bar */}
-                <Box sx={{ px: 3, pt: 1 }}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                    <Typography variant="caption" color="text.secondary">
-                      Profile Completion
-                    </Typography>
-                    <Typography variant="caption" fontWeight={600}>
-                      {Math.round(progress)}%
-                    </Typography>
-                  </Stack>
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={progress} 
-                    sx={{ 
-                      height: 6, 
+                }}
+              />
+
+              {/* Progress Bar */}
+              <Box sx={{
+                px: { xs: 2, sm: 3 },
+                pt: { xs: 0, sm: 1 }
+              }}>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  sx={{ mb: 1 }}
+                >
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
+                  >
+                    Profile Completion
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    fontWeight={600}
+                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
+                  >
+                    {Math.round(progress)}%
+                  </Typography>
+                </Stack>
+                <LinearProgress
+                  variant="determinate"
+                  value={progress}
+                  sx={{
+                    height: { xs: 4, sm: 6 },
+                    borderRadius: 3,
+                    backgroundColor: 'grey.100',
+                    '& .MuiLinearProgress-bar': {
                       borderRadius: 3,
-                      backgroundColor: 'grey.100',
-                      '& .MuiLinearProgress-bar': {
-                        borderRadius: 3,
-                        background: 'linear-gradient(90deg, #1976d2 0%, #4dabf5 100%)'
-                      }
+                      background: 'linear-gradient(90deg, #1976d2 0%, #4dabf5 100%)'
+                    }
+                  }}
+                />
+              </Box>
+
+              <CardContent sx={{ px: { xs: 2, sm: 3 }, py: { xs: 2, sm: 3 } }}>
+                <Stack spacing={{ xs: 2, sm: 3 }}>
+                  {/* Name Field */}
+                  <TextField
+                    label="Full Name"
+                    value={form.name}
+                    error={!!errors.name && touched.name}
+                    helperText={errors.name || (touched.name && "Your legal name as per official documents")}
+                    onChange={handleFormChange('name')}
+                    onBlur={handleBlur('name')}
+                    fullWidth
+                    color={getFieldColor('name')}
+                    size={isMobile ? "small" : "medium"}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <PersonIcon
+                            fontSize={isMobile ? "small" : "medium"}
+                            color={getFieldColor('name')}
+                          />
+                        </InputAdornment>
+                      ),
                     }}
                   />
-                </Box>
 
-                <CardContent>
-                  <Stack spacing={3}>
-                    {/* Name Field */}
-                    <TextField
-                      label="Full Name"
-                      value={form.name}
-                      error={!!errors.name && touched.name}
-                      helperText={errors.name || (touched.name && "Your legal name as per official documents")}
-                      onChange={handleFormChange('name')}
-                      onBlur={handleBlur('name')}
-                      fullWidth
-                      color={getFieldColor('name')}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <PersonIcon color={getFieldColor('name')} />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-
-                    {/* Email Field with OTP */}
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'flex-end' }}>
+                  {/* Email Field with OTP */}
+                  <Box>
+                    <Stack
+                      direction={{ xs: 'column', sm: 'row' }}
+                      spacing={2.5}
+                      alignItems={{ xs: 'stretch', sm: 'flex-end' }}
+                    >
                       <TextField
                         label="Email Address"
                         type="email"
@@ -409,327 +446,333 @@ export default function Signup({ state, persist, setState }) {
                         onBlur={handleBlur('email')}
                         fullWidth
                         color={verified.email ? 'success' : getFieldColor('email')}
+                        size={isMobile ? "small" : "medium"}
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <EmailIcon color={verified.email ? 'success' : getFieldColor('email')} />
+                              <EmailIcon
+                                fontSize={isMobile ? "small" : "medium"}
+                                color={verified.email ? 'success' : getFieldColor('email')}
+                              />
                             </InputAdornment>
                           ),
                         }}
                         disabled={verified.email}
+                        sx={{ 
+                          '& .MuiFormHelperText-root': {
+                            position: 'absolute',
+                            bottom: -20,
+                            whiteSpace: 'nowrap'
+                          }
+                        }}
                       />
-                      <Button 
-                        onClick={sendEmailOtp} 
+                      <Button
+                        onClick={sendEmailOtp}
                         disabled={!isEmail(form.email) || verified.email || sending.email}
                         color={verified.email ? 'success' : 'primary'}
                         variant={verified.email ? 'contained' : 'outlined'}
-                        sx={{ 
+                        sx={{
                           minWidth: { xs: '100%', sm: 140 },
-                          height: 56,
-                          borderRadius: 2
+                          height: { xs: 48, sm: 56 },
+                          borderRadius: 1.1,
+                          fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                          mt: { xs: (errors.email || touched.email) ? 2.5 : 0, sm: 0 }
                         }}
                         startIcon={verified.email ? <CheckCircleIcon /> : sending.email ? <CircularProgress size={20} /> : null}
                       >
                         {sending.email ? 'Sending' : verified.email ? 'Verified' : 'Send OTP'}
                       </Button>
                     </Stack>
+                  </Box>
 
-                    {/* Email OTP Field - FIXED */}
-                    {!verified.email && isEmail(form.email) && (
-                      <Fade in>
-                        <Box sx={{ 
-                          display: 'flex', 
-                          flexDirection: { xs: 'column', sm: 'row' }, 
-                          gap: 2,
-                          alignItems: { xs: 'stretch', sm: 'flex-end' }
-                        }}>
-                          <TextField 
+                  {/* Email OTP Field */}
+                  {!verified.email && isEmail(form.email) && (
+                    <Fade in>
+                      <Box>
+                        <Stack
+                          direction={{ xs: 'column', sm: 'row' }}
+                          spacing={2}
+                          alignItems={{ xs: 'stretch', sm: 'flex-end' }}
+                        >
+                          <TextField
                             label="Email Verification Code"
                             placeholder="Enter 123456"
                             value={otp.email}
-                            onChange={(e) => setOtp({...otp, email: e.target.value})}
+                            onChange={(e) => setOtp({ ...otp, email: e.target.value })}
                             error={!!errors.emailOtp}
-                            helperText={errors.emailOtp || "Enter the code sent to your email"}
                             fullWidth
-                            sx={{ flex: 1 }}
+                            size={isMobile ? "small" : "medium"}
+                            sx={{ 
+                              flex: 1,
+                              '& .MuiFormHelperText-root': {
+                                position: 'absolute',
+                                bottom: -20,
+                                whiteSpace: 'nowrap'
+                              }
+                            }}
                           />
-                          <Button 
+                          <Button
                             onClick={verifyEmailOtp}
                             disabled={!otp.email || verifying.email}
                             variant="contained"
-                            sx={{ 
+                            sx={{
                               minWidth: { xs: '100%', sm: 120 },
-                              height: 56,
-                              borderRadius: 2
+                              height: { xs: 48, sm: 56 },
+                              borderRadius: 1.1,
+                              fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                              mt: { xs: errors.emailOtp ? 2.5 : 0, sm: 0 }
                             }}
                             startIcon={verifying.email ? <CircularProgress size={20} /> : null}
                           >
                             {verifying.email ? 'Verifying' : 'Verify'}
                           </Button>
-                        </Box>
-                      </Fade>
-                    )}
+                        </Stack>
+                      </Box>
+                    </Fade>
+                  )}
 
-                    {/* Mobile Field with OTP */}
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'flex-end' }}>
+                  {/* Mobile Field with OTP */}
+                  <Box>
+                    <Stack
+                      direction={{ xs: 'column', sm: 'row' }}
+                      spacing={2}
+                      alignItems={{ xs: 'stretch', sm: 'flex-end' }}
+                    >
                       <TextField
                         label="Mobile Number"
                         value={form.mobile}
                         error={!!errors.mobile && touched.mobile}
-                        helperText={errors.mobile || (touched.mobile && "10-digit mobile number with country code")}
                         onChange={handleMobileChange}
                         onBlur={handleBlur('mobile')}
                         fullWidth
                         color={verified.mobile ? 'success' : getFieldColor('mobile')}
+                        size={isMobile ? "small" : "medium"}
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <PhoneIcon color={verified.mobile ? 'success' : getFieldColor('mobile')} />
+                              <PhoneIcon
+                                fontSize={isMobile ? "small" : "medium"}
+                                color={verified.mobile ? 'success' : getFieldColor('mobile')}
+                              />
                             </InputAdornment>
                           ),
                         }}
                         disabled={verified.mobile}
+                        sx={{ 
+                          '& .MuiFormHelperText-root': {
+                            position: 'absolute',
+                            bottom: -20,
+                            whiteSpace: 'nowrap'
+                          }
+                        }}
                       />
-                      <Button 
-                        onClick={sendMobileOtp} 
+                      <Button
+                        onClick={sendMobileOtp}
                         disabled={!isPhone(form.mobile) || verified.mobile || sending.mobile}
                         color={verified.mobile ? 'success' : 'primary'}
                         variant={verified.mobile ? 'contained' : 'outlined'}
-                        sx={{ 
+                        sx={{
                           minWidth: { xs: '100%', sm: 140 },
-                          height: 56,
-                          borderRadius: 2
+                          height: { xs: 48, sm: 56 },
+                          borderRadius: 1.1,
+                          fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                          mt: { xs: (errors.mobile || touched.mobile) ? 2.5 : 0, sm: 0 }
                         }}
                         startIcon={verified.mobile ? <CheckCircleIcon /> : sending.mobile ? <CircularProgress size={20} /> : null}
                       >
                         {sending.mobile ? 'Sending' : verified.mobile ? 'Verified' : 'Send OTP'}
                       </Button>
                     </Stack>
+                  </Box>
 
-                    {/* Mobile OTP Field - FIXED */}
-                    {!verified.mobile && isPhone(form.mobile) && (
-                      <Fade in>
-                        <Box sx={{ 
-                          display: 'flex', 
-                          flexDirection: { xs: 'column', sm: 'row' }, 
-                          gap: 2,
-                          alignItems: { xs: 'stretch', sm: 'flex-end' }
-                        }}>
-                          <TextField 
+                  {/* Mobile OTP Field */}
+                  {!verified.mobile && isPhone(form.mobile) && (
+                    <Fade in>
+                      <Box>
+                        <Stack
+                          direction={{ xs: 'column', sm: 'row' }}
+                          spacing={2}
+                          alignItems={{ xs: 'stretch', sm: 'flex-end' }}
+                        >
+                          <TextField
                             label="Mobile Verification Code"
                             placeholder="Enter 654321"
                             value={otp.mobile}
-                            onChange={(e) => setOtp({...otp, mobile: e.target.value})}
+                            onChange={(e) => setOtp({ ...otp, mobile: e.target.value })}
                             error={!!errors.mobileOtp}
                             helperText={errors.mobileOtp || "Enter the code sent to your phone"}
                             fullWidth
-                            sx={{ flex: 1 }}
+                            size={isMobile ? "small" : "medium"}
+                            sx={{ 
+                              flex: 1,
+                              '& .MuiFormHelperText-root': {
+                                position: 'absolute',
+                                bottom: -20,
+                                whiteSpace: 'nowrap'
+                              }
+                            }}
                           />
-                          <Button 
+                          <Button
                             onClick={verifyMobileOtp}
                             disabled={!otp.mobile || verifying.mobile}
                             variant="contained"
-                            sx={{ 
+                            sx={{
                               minWidth: { xs: '100%', sm: 120 },
-                              height: 56,
-                              borderRadius: 2
+                              height: { xs: 48, sm: 56 },
+                              borderRadius: 1.1,
+                              fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                              mt: { xs: errors.mobileOtp ? 2.5 : 0, sm: 0 }
                             }}
                             startIcon={verifying.mobile ? <CircularProgress size={20} /> : null}
                           >
                             {verifying.mobile ? 'Verifying' : 'Verify'}
                           </Button>
-                        </Box>
-                      </Fade>
-                    )}
-
-                    {/* Password Fields */}
-                    <Box sx={{ 
-                      display: 'flex', 
-                      flexDirection: { xs: 'column', sm: 'row' }, 
-                      gap: 2 
-                    }}>
-                      <TextField 
-                        type="password"
-                        label="Password"
-                        value={form.password}
-                        error={!!errors.password && touched.password}
-                        helperText={errors.password || "Minimum 8 characters with letters and numbers"}
-                        onChange={handleFormChange('password')}
-                        onBlur={handleBlur('password')}
-                        fullWidth
-                        color={getFieldColor('password')}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <LockIcon color={getFieldColor('password')} />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                      <TextField 
-                        type="password"
-                        label="Confirm Password"
-                        value={form.confirm}
-                        error={!!errors.confirm && touched.confirm}
-                        helperText={errors.confirm || "Re-enter your password to confirm"}
-                        onChange={handleFormChange('confirm')}
-                        onBlur={handleBlur('confirm')}
-                        fullWidth
-                        color={getFieldColor('confirm')}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <LockIcon color={getFieldColor('confirm')} />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    </Box>
-
-                    {/* Status Alert */}
-                    <Fade in>
-                      <Alert 
-                        severity={canContinue ? 'success' : 'info'}
-                        variant="outlined"
-                        sx={{
-                          borderRadius: 2,
-                          border: '1px solid',
-                          '& .MuiAlert-message': {
-                            width: '100%'
-                          }
-                        }}
-                      >
-                        <Box sx={{ 
-                          display: 'flex', 
-                          flexDirection: { xs: 'column', sm: 'row' }, 
-                          justifyContent: 'space-between', 
-                          alignItems: { xs: 'stretch', sm: 'center' },
-                          gap: 1
-                        }}>
-                          <Typography variant="body2">
-                            {canContinue 
-                              ? 'All set! Your account is ready to be created.' 
-                              : 'Complete all fields and verify your email & mobile to continue.'
-                            }
-                          </Typography>
-                          {!canContinue && (
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                              <Typography variant="caption" color="text.secondary">
-                                {verified.email ? '✓ Email' : '✗ Email'} • {verified.mobile ? '✓ Mobile' : '✗ Mobile'}
-                              </Typography>
-                              <IconButton size="small" onClick={loadDraft} title="Reload saved draft">
-                                <RefreshIcon fontSize="small" />
-                              </IconButton>
-                            </Box>
-                          )}
-                        </Box>
-                      </Alert>
+                        </Stack>
+                      </Box>
                     </Fade>
-                  </Stack>
-                </CardContent>
-                
-                <CardActions sx={{ p: 3, pt: 0 }}>
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ width: '100%' }}>
-                    <Button 
-                      onClick={() => setClearDialogOpen(true)}
-                      variant="outlined"
-                      color="error"
-                      startIcon={<DeleteIcon />}
-                      sx={{ 
-                        minWidth: { xs: '100%', sm: 140 },
-                        height: 56,
-                        borderRadius: 2
-                      }}
-                    >
-                      Clear Data
-                    </Button>
-                    <Button 
-                      fullWidth
-                      disabled={!canContinue}
-                      onClick={handleContinue}
-                      variant="contained"
-                      size="large"
-                      sx={{
-                        height: 56,
-                        borderRadius: 2,
-                        fontSize: '1.1rem',
-                        fontWeight: 600,
-                        background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
-                        boxShadow: '0 4px 15px rgba(25, 118, 210, 0.3)',
-                        '&:hover': {
-                          boxShadow: '0 6px 20px rgba(25, 118, 210, 0.4)',
-                          transform: 'translateY(-1px)'
-                        },
-                        '&:disabled': {
-                          background: 'grey.300'
-                        },
-                        transition: 'all 0.3s ease'
-                      }}
-                    >
-                      Create Account & Continue
-                    </Button>
-                  </Stack>
-                </CardActions>
-              </Card>
-            </Fade>
-          </Stack>
-        </Box>
-      </Box>
+                  )}
 
-      {/* Clear Data Confirmation Dialog */}
-      <Dialog 
-        open={clearDialogOpen} 
-        onClose={() => setClearDialogOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>
-          <Typography variant="h6" fontWeight="bold" color="error">
-            Clear All Data
-          </Typography>
-        </DialogTitle>
-        
-        <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1 }}>
-            <Alert severity="warning" variant="outlined">
-              <Typography variant="body2" fontWeight="bold">
-                This action cannot be undone!
-              </Typography>
-            </Alert>
-            <Typography variant="body2" color="text.secondary">
-              Are you sure you want to clear all form data? This will remove:
-            </Typography>
-            <Box sx={{ pl: 2 }}>
-              <Typography variant="body2" color="text.secondary">
-                • All entered form fields<br/>
-                • OTP verification codes<br/>
-                • Verification status<br/>
-                • Saved draft data
-              </Typography>
-            </Box>
-            <Typography variant="body2" color="text.secondary">
-              You'll need to start over from the beginning.
-            </Typography>
-          </Stack>
-        </DialogContent>
-        
-        <DialogActions sx={{ p: 3, pt: 0 }}>
-          <Button 
-            onClick={() => setClearDialogOpen(false)}
-            variant="outlined"
-          >
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleClearData}
-            variant="contained"
-            color="error"
-            startIcon={<DeleteIcon />}
-          >
-            Clear All Data
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
+                  {/* Password Fields */}
+                  <Box sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    gap: 2
+                  }}>
+                    <TextField
+                      type="password"
+                      label="Password"
+                      value={form.password}
+                      error={!!errors.password && touched.password}
+                      helperText={errors.password || "Minimum 8 characters with letters and numbers"}
+                      onChange={handleFormChange('password')}
+                      onBlur={handleBlur('password')}
+                      fullWidth
+                      color={getFieldColor('password')}
+                      size={isMobile ? "small" : "medium"}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <LockIcon
+                              fontSize={isMobile ? "small" : "medium"}
+                              color={getFieldColor('password')}
+                            />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    <TextField
+                      type="password"
+                      label="Confirm Password"
+                      value={form.confirm}
+                      error={!!errors.confirm && touched.confirm}
+                      helperText={errors.confirm || "Re-enter your password to confirm"}
+                      onChange={handleFormChange('confirm')}
+                      onBlur={handleBlur('confirm')}
+                      fullWidth
+                      color={getFieldColor('confirm')}
+                      size={isMobile ? "small" : "medium"}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <LockIcon
+                              fontSize={isMobile ? "small" : "medium"}
+                              color={getFieldColor('confirm')}
+                            />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Box>
+
+                  {/* Status Alert */}
+                  <Fade in>
+                    <Alert
+                      severity={canContinue ? 'success' : 'info'}
+                      variant="outlined"
+                      sx={{
+                        borderRadius: 1.1,
+                        border: '1px solid',
+                        '& .MuiAlert-message': {
+                          width: '100%'
+                        }
+                      }}
+                    >
+                      <Box sx={{
+                        display: 'flex',
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        justifyContent: 'space-between',
+                        alignItems: { xs: 'stretch', sm: 'center' },
+                        gap: 1
+                      }}>
+                        <Typography
+                          variant="body2"
+                          sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
+                        >
+                          {canContinue
+                            ? 'All set! Your account is ready to be created.'
+                            : 'Complete all fields and verify your email & mobile to continue.'
+                          }
+                        </Typography>
+                        {!canContinue && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
+                            >
+                              {verified.email ? '✓ Email' : '✗ Email'} • {verified.mobile ? '✓ Mobile' : '✗ Mobile'}
+                            </Typography>
+                            <RefreshIcon
+                              fontSize="small"
+                              sx={{
+                                cursor: 'pointer',
+                                fontSize: { xs: '0.8rem', sm: '1rem' }
+                              }}
+                              onClick={loadDraft}
+                              title="Reload saved draft"
+                            />
+                          </Box>
+                        )}
+                      </Box>
+                    </Alert>
+                  </Fade>
+                </Stack>
+              </CardContent>
+
+              <CardActions sx={{
+                p: { xs: 2, sm: 3 },
+                pt: 0
+              }}>
+                <Button
+                  fullWidth
+                  disabled={!canContinue}
+                  onClick={handleContinue}
+                  variant="contained"
+                  size="large"
+                  sx={{
+                    height: { xs: 48, sm: 56 },
+                    borderRadius: 1.1,
+                    fontSize: { xs: '1rem', sm: '1.1rem' },
+                    fontWeight: 600,
+                    background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
+                    boxShadow: '0 4px 15px rgba(25, 118, 210, 0.3)',
+                    '&:hover': {
+                      boxShadow: '0 6px 20px rgba(25, 118, 210, 0.4)',
+                      transform: 'translateY(-1px)'
+                    },
+                    '&:disabled': {
+                      background: 'grey.300'
+                    },
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  Create Account & Continue
+                </Button>
+              </CardActions>
+            </Card>
+          </Fade>
+        </Stack>
+      </Box>
+    </Box>
   )
 }

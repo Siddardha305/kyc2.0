@@ -155,10 +155,10 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
 
   const PlanCard = ({ plan, index }) => (
     <Fade in timeout={600} style={{ transitionDelay: `${index * 150}ms` }}>
-      <Card 
-        sx={{ 
+      <Card
+        sx={{
           height: '100%',
-          borderRadius: 2,
+          borderRadius: 1.1,
           border: selected === plan.key ? `2px solid ${theme.palette.primary.main}` : '1px solid',
           borderColor: selected === plan.key ? theme.palette.primary.main : theme.palette.grey[200],
           backgroundColor: 'white',
@@ -167,7 +167,7 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
           position: 'relative',
           overflow: 'visible',
           '&:hover': {
-            boxShadow: selected === plan.key 
+            boxShadow: selected === plan.key
               ? `0 12px 32px ${alpha(theme.palette.primary.main, 0.2)}`
               : '0 4px 16px rgba(0,0,0,0.08)',
             transform: 'translateY(-2px)'
@@ -175,18 +175,18 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
         }}
       >
         {plan.recommended && (
-          <Box sx={{ 
-            position: 'absolute', 
-            top: -10, 
-            left: '50%', 
+          <Box sx={{
+            position: 'absolute',
+            top: -10,
+            left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 2
           }}>
-            <Chip 
+            <Chip
               icon={<StarIcon sx={{ fontSize: 16 }} />}
-              label="RECOMMENDED" 
+              label="RECOMMENDED"
               size="small"
-              sx={{ 
+              sx={{
                 fontWeight: 600,
                 fontSize: '0.7rem',
                 backgroundColor: theme.palette.primary.main,
@@ -196,16 +196,16 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
             />
           </Box>
         )}
-        
-        <CardContent sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
+
+        <CardContent sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column', }}>
           {/* Header */}
           <Box sx={{ textAlign: 'center', mb: 2 }}>
-            <Typography 
-              variant="h6" 
-              fontWeight={600} 
-              color="text.primary" 
+            <Typography
+              variant="h6"
+              fontWeight={600}
+              color="text.primary"
               gutterBottom
-              sx={{ 
+              sx={{
                 fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
                 lineHeight: 1.3,
                 minHeight: { xs: 'auto', md: '3.2rem' },
@@ -216,10 +216,10 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
             >
               {plan.title}
             </Typography>
-            <Typography 
-              variant="body2" 
-              color="text.secondary" 
-              sx={{ 
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
                 mb: 1.5,
                 fontSize: { xs: '0.8rem', sm: '0.875rem' },
                 lineHeight: 1.4
@@ -227,20 +227,20 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
             >
               {plan.subtitle}
             </Typography>
-            
+
             {/* Price */}
             <Box sx={{ mb: 1.5 }}>
-              <Typography 
-                variant="h4" 
-                fontWeight={700} 
+              <Typography
+                variant="h4"
+                fontWeight={700}
                 color="primary.main"
                 sx={{ fontSize: { xs: '1.75rem', sm: '2rem', md: '2.125rem' } }}
               >
                 {plan.price}
               </Typography>
-              <Typography 
-                variant="caption" 
-                color="text.secondary" 
+              <Typography
+                variant="caption"
+                color="text.secondary"
                 fontWeight={500}
                 sx={{ fontSize: { xs: '0.75rem', sm: '0.8rem' } }}
               >
@@ -252,22 +252,22 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
           <Divider sx={{ my: 1.5 }} />
 
           {/* Features */}
-          <Box sx={{ flex: 1, mb: 2 }}>
-            <Stack spacing={1}>
+          <Box sx={{ flex: 2, mb: 2 }}>
+            <Stack spacing={2.5}>
               {plan.features.map((feature, idx) => (
                 <Box key={idx} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                  <CheckCircleIcon 
-                    sx={{ 
+                  <CheckCircleIcon
+                    sx={{
                       fontSize: 16,
                       color: theme.palette.primary.main,
                       flexShrink: 0,
                       mt: 0.2
-                    }} 
+                    }}
                   />
-                  <Typography 
-                    variant="body2" 
-                    color="text.primary" 
-                    sx={{ 
+                  <Typography
+                    variant="body2"
+                    color="text.primary"
+                    sx={{
                       lineHeight: 1.4,
                       fontSize: { xs: '0.8rem', sm: '0.875rem' }
                     }}
@@ -282,15 +282,22 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
           {/* Select Button */}
           <Button
             fullWidth
-            variant={selected === plan.key ? "contained" : "outlined"}
+            variant="contained"
             onClick={() => handleSelect(plan.key)}
             sx={{
-              borderRadius: 1,
+              borderRadius: 1.1,
               fontWeight: 600,
               textTransform: 'none',
-              py: 1,
+              py: 1.2,
               fontSize: { xs: '0.875rem', sm: '0.9rem' },
-              ...(selected === plan.key && {
+              ...(selected === plan.key ? {
+                // Selected - Green
+                backgroundColor: '#175ee2',
+                '&:hover': {
+                  backgroundColor: '#0470cfff'
+                }
+              } : {
+                // Select Plan - Blue
                 backgroundColor: theme.palette.primary.main,
                 '&:hover': {
                   backgroundColor: theme.palette.primary.dark
@@ -312,18 +319,18 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
 
       {/* Header */}
       <Box sx={{ textAlign: 'center', mb: 6 }}>
-        <Typography 
-          variant="h4" 
-          fontWeight={700} 
-          color="text.primary" 
+        <Typography
+          variant="h4"
+          fontWeight={700}
+          color="text.primary"
           gutterBottom
           sx={{ fontSize: { xs: '1.75rem', md: '2.125rem' } }}
         >
           Choose Your Plan
         </Typography>
-        <Typography 
-          variant="body1" 
-          color="text.secondary" 
+        <Typography
+          variant="body1"
+          color="text.secondary"
           sx={{ maxWidth: 600, mx: 'auto', fontSize: { xs: '0.875rem', md: '1rem' } }}
         >
           Select the financial planning service that best fits your needs and investment goals
@@ -333,7 +340,7 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
       <Grid container spacing={2} alignItems="flex-start">
         {/* Plans Grid */}
         <Grid item xs={12} lg={8}>
-          <Grid container spacing={2}>
+          <Grid container spacing={3}>
             {plans.map((plan, index) => (
               <Grid item xs={12} md={4} key={plan.key}>
                 <PlanCard plan={plan} index={index} />
@@ -342,20 +349,20 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
           </Grid>
 
           {/* Next Section */}
-          <Paper 
+          <Paper
             elevation={0}
-            sx={{ 
-              mt: 3, 
-              p: 2, 
+            sx={{
+              mt: 3,
+              p: 2,
               backgroundColor: alpha(theme.palette.primary.main, 0.02),
               border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
               borderRadius: 2
             }}
           >
-            <Stack 
-              direction={isMobile ? 'column' : 'row'} 
-              spacing={2} 
-              justifyContent="space-between" 
+            <Stack
+              direction={isMobile ? 'column' : 'row'}
+              spacing={2}
+              justifyContent="space-between"
               alignItems={isMobile ? 'stretch' : 'center'}
             >
               <Box>
@@ -366,8 +373,8 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
                   Ready to proceed with your selected plan?
                 </Typography>
               </Box>
-              
-              <Button 
+
+              <Button
                 variant="contained"
                 size="large"
                 onClick={() => navigateTo('sign')}
@@ -390,7 +397,7 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
         </Grid>
 
         {/* Summary Sidebar */}
-        <Grid item xs={12} lg={4}>
+        {/* <Grid item xs={12} lg={4}>
           <Box sx={{ position: isTablet ? 'static' : 'sticky', top: 24 }}>
             <Paper 
               elevation={0}
@@ -451,14 +458,14 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
               </Stack>
             </Paper>
           </Box>
-        </Grid>
+        </Grid> */}
       </Grid>
 
       {/* Dialogs */}
-      <Dialog 
-        open={rebalanceOpen} 
-        onClose={() => setRebalanceOpen(false)} 
-        fullWidth 
+      <Dialog
+        open={rebalanceOpen}
+        onClose={() => setRebalanceOpen(false)}
+        fullWidth
         maxWidth="sm"
         PaperProps={{
           sx: { borderRadius: 2 }
@@ -483,8 +490,8 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
               placeholder="e.g., 5,000,000"
               inputProps={{ inputMode: 'decimal' }}
             />
-            <Box sx={{ 
-              p: 1.5, 
+            <Box sx={{
+              p: 1.5,
               backgroundColor: alpha(theme.palette.primary.main, 0.04),
               borderRadius: 1,
               border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`
@@ -498,14 +505,14 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
           </Stack>
         </DialogContent>
         <DialogActions sx={{ p: 2, pt: 0 }}>
-          <Button 
+          <Button
             onClick={() => setRebalanceOpen(false)}
             sx={{ fontWeight: 500 }}
           >
             Cancel
           </Button>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             onClick={confirmRebalance}
             disabled={!portfolioValue}
             sx={{ fontWeight: 500 }}
@@ -515,10 +522,10 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
         </DialogActions>
       </Dialog>
 
-      <Dialog 
-        open={exclusiveOpen} 
-        onClose={() => setExclusiveOpen(false)} 
-        fullWidth 
+      <Dialog
+        open={exclusiveOpen}
+        onClose={() => setExclusiveOpen(false)}
+        fullWidth
         maxWidth="sm"
         PaperProps={{
           sx: { borderRadius: 2 }
@@ -543,8 +550,8 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
               placeholder="e.g., 15,000,000"
               inputProps={{ inputMode: 'decimal' }}
             />
-            <Box sx={{ 
-              p: 1.5, 
+            <Box sx={{
+              p: 1.5,
               backgroundColor: alpha(theme.palette.primary.main, 0.04),
               borderRadius: 1,
               border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`
@@ -558,14 +565,14 @@ export default function Plans({ state, persist, onLogout, navigateTo }) {
           </Stack>
         </DialogContent>
         <DialogActions sx={{ p: 2, pt: 0 }}>
-          <Button 
+          <Button
             onClick={() => setExclusiveOpen(false)}
             sx={{ fontWeight: 500 }}
           >
             Cancel
           </Button>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             onClick={confirmExclusive}
             sx={{ fontWeight: 500 }}
           >

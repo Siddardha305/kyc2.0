@@ -119,9 +119,9 @@ export default function KycProfessional({ state, persist }) {
         {/* Progress Header */}
         <Paper elevation={0} sx={{ 
           p: 3, 
-          mb: 3, 
+          mb: 1, 
           background: 'linear-gradient(135deg, #f5f7fa 0%, #e3e8f0 100%)',
-          borderRadius: 3
+          borderRadius: 1.1
         }}>
           <Stack spacing={2}>
             <Typography variant="h5" fontWeight={600} color="primary">
@@ -142,7 +142,7 @@ export default function KycProfessional({ state, persist }) {
               width: '100%', 
               height: 6, 
               backgroundColor: 'grey.200',
-              borderRadius: 3,
+              borderRadius: 1.1,
               overflow: 'hidden'
             }}>
               <Box sx={{ 
@@ -156,9 +156,9 @@ export default function KycProfessional({ state, persist }) {
           </Stack>
         </Paper>
 
-        <Card sx={{ borderRadius: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.08)' }}>
-          <CardContent sx={{ p: 4 }}>
-            <Stack spacing={4}>
+        <Card sx={{ borderRadius: 1.1, boxShadow: '0 8px 32px rgba(0, 0, 0, 0)' }}>
+          <CardContent sx={{ p: 2 }}>
+            <Stack spacing={1}>
               {/* Occupation Type */}
               <FormControl error={!!errors.type && touched.type}>
                 <FormLabel 
@@ -196,11 +196,11 @@ export default function KycProfessional({ state, persist }) {
                           }
                           sx={{
                             width: '100%',
-                            m: 0,
-                            p: 2,
+                            m: 1,
+                            p: 0,
                             border: '2px solid',
                             borderColor: kyc.occupationType === type.value ? 'primary.main' : 'grey.200',
-                            borderRadius: 2,
+                            borderRadius: 1.1,
                             backgroundColor: kyc.occupationType === type.value ? 'primary.50' : 'transparent',
                             transition: 'all 0.2s ease',
                             '&:hover': {
@@ -244,7 +244,7 @@ export default function KycProfessional({ state, persist }) {
                   }}
                   onBlur={handleBlur('occ')}
                   sx={{
-                    borderRadius: 2,
+                    borderRadius: 1.1,
                     '& .MuiOutlinedInput-notchedOutline': {
                       borderColor: errors.occ && touched.occ ? 'error.main' : 'grey.300'
                     }
@@ -252,7 +252,7 @@ export default function KycProfessional({ state, persist }) {
                   MenuProps={{
                     PaperProps: {
                       sx: {
-                        borderRadius: 2,
+                        borderRadius: 1.1,
                         marginTop: 1
                       }
                     }
@@ -295,7 +295,7 @@ export default function KycProfessional({ state, persist }) {
                   fullWidth
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
+                      borderRadius: 1.1,
                     }
                   }}
                   InputProps={{
@@ -313,7 +313,7 @@ export default function KycProfessional({ state, persist }) {
                     severity="success"
                     variant="outlined"
                     sx={{
-                      borderRadius: 2,
+                      borderRadius: 1.1,
                       border: '1px solid',
                     }}
                     icon={getOccupationIcon(kyc.occupation)}
@@ -333,7 +333,7 @@ export default function KycProfessional({ state, persist }) {
                   onClick={back}
                   sx={{
                     height: 48,
-                    borderRadius: 2,
+                    borderRadius: 1.1,
                     minWidth: 120,
                     fontWeight: 600
                   }}
@@ -348,7 +348,7 @@ export default function KycProfessional({ state, persist }) {
                   sx={{
                     minWidth: 140,
                     height: 48,
-                    borderRadius: 2,
+                    borderRadius: 1.1,
                     fontSize: '1rem',
                     fontWeight: 600,
                     background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',

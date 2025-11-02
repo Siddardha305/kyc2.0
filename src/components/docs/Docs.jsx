@@ -155,33 +155,6 @@ export default function Docs({ state, persist, onLogout, navigateTo }) {
       >
         <Stack spacing={3}>
           {/* Requirements Info */}
-          <Box>
-            <Typography variant="h6" fontWeight={600} gutterBottom color="primary">
-              📋 Document Requirements
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Stack spacing={1}>
-                  <Typography variant="body2" color="text.secondary">
-                    • Supported formats: PNG, JPG, JPEG
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    • Maximum file size: 10MB per document
-                  </Typography>
-                </Stack>
-              </Grid>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Stack spacing={1}>
-                  <Typography variant="body2" color="text.secondary">
-                    • Ensure documents are clear and readable
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    • All fields marked with * are mandatory
-                  </Typography>
-                </Stack>
-              </Grid>
-            </Grid>
-          </Box>
 
           {/* Status Alert */}
           {allUploaded ? (

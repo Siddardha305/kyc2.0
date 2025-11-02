@@ -129,7 +129,7 @@ export default function Login({ setState }) {
       <Box sx={{ 
         minHeight: '100vh', 
         py: 4,
-        px: 2
+        px: 1
       }}>
         <Box sx={{ 
           maxWidth: 1200, 
@@ -143,7 +143,7 @@ export default function Login({ setState }) {
               background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)', 
               color: '#fff', 
               flex: { xs: 1, md: 0.45 },
-              borderRadius: 4,
+              borderRadius: 1.1,
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
@@ -156,7 +156,7 @@ export default function Login({ setState }) {
                 right: -50,
                 width: 100,
                 height: 100,
-                borderRadius: '50%',
+                borderRadius: '20%',
                 background: 'rgba(255,255,255,0.1)'
               }
             }}>
@@ -194,7 +194,7 @@ export default function Login({ setState }) {
             <Fade in timeout={800}>
               <Card sx={{ 
                 flex: 1, 
-                borderRadius: 4,
+                borderRadius: 1.1,
                 boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
                 border: '1px solid rgba(255,255,255,0.2)',
                 backdropFilter: 'blur(10px)'
@@ -238,7 +238,7 @@ export default function Login({ setState }) {
                       }}
                       sx={{
                         '& .MuiOutlinedInput-root': {
-                          borderRadius: 2,
+                          borderRadius: 1.1,
                         }
                       }}
                     />
@@ -279,7 +279,7 @@ export default function Login({ setState }) {
                       }}
                       sx={{
                         '& .MuiOutlinedInput-root': {
-                          borderRadius: 2,
+                          borderRadius: 1.1,
                         }
                       }}
                     />
@@ -310,7 +310,7 @@ export default function Login({ setState }) {
                           severity="error"
                           variant="outlined"
                           sx={{
-                            borderRadius: 2,
+                            borderRadius: 1.1,
                             border: '1px solid',
                             '& .MuiAlert-message': {
                               width: '100%'
@@ -333,7 +333,7 @@ export default function Login({ setState }) {
                           severity="success"
                           variant="outlined"
                           sx={{
-                            borderRadius: 2,
+                            borderRadius: 1.1,
                             border: '1px solid',
                           }}
                         >
@@ -355,7 +355,7 @@ export default function Login({ setState }) {
                     size="large"
                     sx={{
                       height: 56,
-                      borderRadius: 2,
+                      borderRadius: 1.1,
                       fontSize: '1.1rem',
                       fontWeight: 600,
                       background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',

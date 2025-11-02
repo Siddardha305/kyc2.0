@@ -110,11 +110,11 @@ export default function KycReview({ state, persist, goRisk }) {
     <Fade in timeout={600}>
       <Box>
         {/* Header Section */}
-        <Paper elevation={0} sx={{ 
-          p: 3, 
-          mb: 3, 
+        {/* <Paper elevation={0} sx={{ 
+          p: 2, 
+          mb: 2, 
           background: 'linear-gradient(135deg, #f5f7fa 0%, #e3e8f0 100%)',
-          borderRadius: 3,
+          borderRadius: 1.1,
           textAlign: 'center'
         }}>
           <Stack spacing={2} alignItems="center">
@@ -135,10 +135,10 @@ export default function KycReview({ state, persist, goRisk }) {
             </Typography>
             <Typography variant="body1" color="text.secondary" maxWidth={600}>
               Please review all the information you've provided. Make sure everything is accurate before proceeding to the next step.
-            </Typography>
+            </Typography> */}
             
             {/* Completion Status */}
-            <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 1 }}>
+            {/* <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 1 }}>
               <Chip 
                 icon={<CheckCircleIcon />}
                 label={`${completion.completed}/${completion.total} Fields Completed`}
@@ -150,24 +150,23 @@ export default function KycReview({ state, persist, goRisk }) {
               </Typography>
             </Stack>
           </Stack>
-        </Paper>
+        </Paper> */}
 
         {/* Review Cards */}
-        <Stack spacing={3}>
+        <Stack spacing={1}>
           {Object.entries(fieldGroups).map(([groupKey, group]) => (
             <Card 
               key={groupKey}
               sx={{ 
-                borderRadius: 3, 
-                boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
-                border: '1px solid',
+                borderRadius: 1.1, 
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0)',
                 borderColor: 'grey.100'
               }}
             >
-              <CardContent sx={{ p: 4 }}>
-                <Stack spacing={3}>
+              <CardContent sx={{ p: 1 }}>
+                <Stack spacing={2}>
                   {/* Section Header */}
-                  <Stack direction="row" spacing={2} alignItems="center">
+                  <Stack direction="row" spacing={1} alignItems="center">
                     <Box sx={{ 
                       color: 'primary.main',
                       display: 'flex',
@@ -183,7 +182,7 @@ export default function KycReview({ state, persist, goRisk }) {
                   <Divider />
 
                   {/* Fields Grid - Updated for MUI Grid v2 */}
-                  <Grid container spacing={3}>
+                  <Grid container spacing={0}>
                     {group.fields.map((field) => {
                       const value = kyc[field.key]
                       const isCompleted = !!value
@@ -215,7 +214,6 @@ export default function KycReview({ state, persist, goRisk }) {
                               sx={{ 
                                 minHeight: '24px',
                                 color: isCompleted ? 'text.primary' : 'text.disabled',
-                                fontFamily: isCompleted ? 'inherit' : 'italic'
                               }}
                             >
                               {formatValue(field.key, value)}
@@ -235,10 +233,10 @@ export default function KycReview({ state, persist, goRisk }) {
         <Paper 
           elevation={0}
           sx={{ 
-            mt: 4, 
+            mt: 1, 
             p: 3, 
             background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-            borderRadius: 3
+            borderRadius: 1.1
           }}
         >
           <Stack 
@@ -268,7 +266,7 @@ export default function KycReview({ state, persist, goRisk }) {
                 fullWidth={isMobile}
                 sx={{
                   height: 48,
-                  borderRadius: 2,
+                  borderRadius: 1.1,
                   minWidth: 140,
                   fontWeight: 600,
                   borderColor: 'grey.300',
@@ -287,7 +285,7 @@ export default function KycReview({ state, persist, goRisk }) {
                 fullWidth={isMobile}
                 sx={{
                   height: 48,
-                  borderRadius: 2,
+                  borderRadius: 1.1,
                   minWidth: 200,
                   fontSize: '1rem',
                   fontWeight: 600,
@@ -313,7 +311,7 @@ export default function KycReview({ state, persist, goRisk }) {
             variant="outlined"
             sx={{
               mt: 3,
-              borderRadius: 2,
+              borderRadius: 1.1,
               border: '1px solid',
               borderColor: 'info.light',
               backgroundColor: 'info.50'

@@ -205,13 +205,13 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
   }
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 2 }}>
       {/* Progress Header */}
       <Paper elevation={0} sx={{ 
         p: 3, 
-        mb: 4, 
-        background: 'linear-gradient(135deg, #f5f7fa 0%, #e3e8f0 100%)',
-        borderRadius: 3
+        mb: 3, 
+        background: 'linear-gradient(135deg, #d9e1eb8e 0%, #e3e8f0 100%)',
+        borderRadius: 1.1
       }}>
         <Stack spacing={2}>
           <Stack direction="row" spacing={2} alignItems="center">
@@ -263,15 +263,15 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
         </Stack>
       </Paper>
 
-      <Grid container spacing={4}>
+      <Grid container spacing={2}>
         {/* Questions Section */}
         <Grid size={{ xs: 12, lg: 8 }}>
-          <Stack spacing={3}>
+          <Stack spacing={2}>
             {riskQuestions.map((q, index) => (
               <Fade in key={q.id} timeout={600} style={{ transitionDelay: `${index * 100}ms` }}>
                 <Card sx={{ 
-                  borderRadius: 3, 
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+                  borderRadius: 1.1, 
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0)',
                   border: '1px solid',
                   borderColor: 'grey.100',
                   transition: 'all 0.3s ease',
@@ -322,10 +322,10 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
                                   }
                                   sx={{
                                     m: 0,
-                                    p: 2,
+                                    p: 1.2,
                                     border: '2px solid',
                                     borderColor: answers[q.id] === idx ? 'primary.main' : 'grey.200',
-                                    borderRadius: 2,
+                                    borderRadius: 1.1,
                                     backgroundColor: answers[q.id] === idx ? 'primary.50' : 'transparent',
                                     transition: 'all 0.2s ease',
                                     '&:hover': {
@@ -370,7 +370,7 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
                                       p: 2,
                                       border: '2px solid',
                                       borderColor: checked ? 'primary.main' : 'grey.200',
-                                      borderRadius: 2,
+                                      borderRadius: 1.1,
                                       backgroundColor: checked ? 'primary.50' : 'transparent',
                                       transition: 'all 0.2s ease',
                                       '&:hover': {
@@ -392,7 +392,7 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
                             value={answers[q.id] ?? ''}
                             onChange={(e) => setA(q.id, Number(e.target.value))}
                             displayEmpty
-                            sx={{ borderRadius: 2 }}
+                            sx={{ borderRadius: 1.1 }}
                           >
                             <MenuItem value="">
                               <em>Select an option</em>
@@ -426,7 +426,7 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
         <Grid size={{ xs: 12, lg: 4 }}>
           <Box sx={{ position: 'sticky', top: 24 }}>
             <Card sx={{ 
-              borderRadius: 3, 
+              borderRadius: 1.1, 
               boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
               border: 'none'
             }}>
@@ -443,7 +443,7 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
                     <Box sx={{ 
                       width: 60, 
                       height: 60, 
-                      borderRadius: '50%', 
+                      borderRadius: '20%', 
                       backgroundColor: 'rgba(255,255,255,0.2)',
                       display: 'flex',
                       alignItems: 'center',
@@ -500,7 +500,7 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
                   <Box sx={{
                     mt: 3,
                     p: 2,
-                    borderRadius: 2,
+                    borderRadius: 1.1,
                     border: '1px solid',
                     borderColor: allAnswered ? 'success.light' : 'info.light',
                     backgroundColor: allAnswered ? 'success.50' : 'info.50'
@@ -526,7 +526,7 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
                     sx={{
                       mt: 3,
                       height: 48,
-                      borderRadius: 2,
+                      borderRadius: 1.1,
                       fontSize: '1rem',
                       fontWeight: 600,
                       background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',

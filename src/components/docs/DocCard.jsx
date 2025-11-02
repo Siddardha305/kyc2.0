@@ -57,6 +57,8 @@ export default function DocCard({ id, title, state, persist }) {
     const progressInterval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 90) {
+           
+          Chip
           clearInterval(progressInterval)
           return 90
         }

@@ -39,7 +39,7 @@ export default function KycPersonal({ state, persist }) {
   // Calculate form completion progress
   useEffect(() => {
     let completed = 0
-    const total = 7 // all fields
+    const total = 7 
     
     if (local.name.trim()) completed++
     if (local.fatherName.trim()) completed++
@@ -125,10 +125,10 @@ export default function KycPersonal({ state, persist }) {
       <Box>
         {/* Progress Header */}
         <Paper elevation={0} sx={{ 
-          p: 3, 
-          mb: 3, 
+          p: 2, 
+          mb: 1, 
           background: 'linear-gradient(135deg, #f5f7fa 0%, #e3e8f0 100%)',
-          borderRadius: 3
+          borderRadius: 1.1
         }}>
           <Stack spacing={2}>
             <Typography variant="h5" fontWeight={600} color="primary">
@@ -163,11 +163,11 @@ export default function KycPersonal({ state, persist }) {
           </Stack>
         </Paper>
 
-        <Card sx={{ borderRadius: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.08)' }}>
-          <CardContent sx={{ p: 4 }}>
-            <Stack spacing={4}>
+        <Card sx={{ borderRadius: 1.1, boxShadow: '0 8px 32px rgba(0, 0, 0, 0)' }}>
+          <CardContent sx={{ p: 1 }}>
+            <Stack spacing={1.6}>
               {/* Personal Details Grid */}
-              <Grid container spacing={3}>
+              <Grid container spacing={2.5}>
                 <Grid item xs={12} md={6}>
                   <TextField
                     label="Full Name as per PAN"
@@ -180,7 +180,6 @@ export default function KycPersonal({ state, persist }) {
                     }}
                     onBlur={handleBlur('name')}
                     error={!!errors.name && touched.name}
-                    helperText={errors.name || "Your legal name as per PAN card"}
                     color={getFieldColor('name')}
                     InputProps={{
                       startAdornment: (
@@ -191,7 +190,7 @@ export default function KycPersonal({ state, persist }) {
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
+                        borderRadius: 1.1,
                       }
                     }}
                   />
@@ -205,7 +204,6 @@ export default function KycPersonal({ state, persist }) {
                     onChange={(e) => setL('fatherName', e.target.value)}
                     onBlur={handleBlur('fatherName')}
                     error={!!errors.fatherName && touched.fatherName}
-                    helperText={errors.fatherName || "Father's full name"}
                     color={getFieldColor('fatherName')}
                     InputProps={{
                       startAdornment: (
@@ -216,7 +214,7 @@ export default function KycPersonal({ state, persist }) {
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
+                        borderRadius: 1.1,
                       }
                     }}
                   />
@@ -237,7 +235,6 @@ export default function KycPersonal({ state, persist }) {
                       textField: {
                         fullWidth: true,
                         error: !!errors.dob && touched.dob,
-                        helperText: errors.dob || "Your date of birth",
                         onBlur: handleBlur('dob'),
                         InputProps: {
                           startAdornment: (
@@ -248,7 +245,7 @@ export default function KycPersonal({ state, persist }) {
                         },
                         sx: {
                           '& .MuiOutlinedInput-root': {
-                            borderRadius: 2,
+                            borderRadius: 1.1,
                           }
                         }
                       },
@@ -277,7 +274,7 @@ export default function KycPersonal({ state, persist }) {
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
+                        borderRadius: 1.1,
                       }
                     }}
                     inputProps={{ 
@@ -308,7 +305,7 @@ export default function KycPersonal({ state, persist }) {
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
+                        borderRadius: 1.1,
                       }
                     }}
                     inputProps={{ maxLength: 12 }}
@@ -478,7 +475,7 @@ export default function KycPersonal({ state, persist }) {
                   sx={{
                     minWidth: 140,
                     height: 48,
-                    borderRadius: 2,
+                    borderRadius: 1.1,
                     fontSize: '1rem',
                     fontWeight: 600,
                     background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',

@@ -259,14 +259,27 @@ export default function App() {
   const logout = () => { clearCurrentSession(); setState(getInitialState()) }
 
   const Auth = () => (
-    <Container maxWidth="lg" sx={{ py: 6 }}>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 3 }}>
-        <Typography variant="h6" fontWeight={800}>Digital Onboarding</Typography>
-        <Tabs value={authTab} onChange={(_,v)=>setAuthTab(v)} aria-label="auth tabs">
-          <Tab label="Sign Up"/>
-          <Tab label="Login"/>
-        </Tabs>
-      </Stack>
+    <Container maxWidth="lg" sx={{ py: 2 }}>
+<Stack 
+  direction="row" 
+  alignItems="center" 
+  justifyContent="space-between" 
+  sx={{ 
+    mb: 1,
+    p: 1.5,
+    backgroundColor: 'white',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+    borderRadius: 1.3,
+    border: '1px solid',
+    borderColor: 'grey.100'
+  }}
+>
+  <Typography variant="h5" fontWeight={800}>Digital Onboarding</Typography>
+  <Tabs value={authTab} onChange={(_,v)=>setAuthTab(v)} aria-label="auth tabs">
+    <Tab label="Sign Up"/>
+    <Tab label="Login"/>
+  </Tabs>
+</Stack>
       {authTab===0? <Signup state={state} persist={persist} setState={setState}/> : <Login setState={setState}/>}
     </Container>
   )
@@ -288,36 +301,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <Box sx={{ minHeight: '100dvh', bgcolor: '#f5f7fb', py: 2 }}>
-          <Container maxWidth="lg" sx={{ mb: 2 }}>
-            <Paper elevation={0} sx={{ 
-              p: 3, 
-              borderRadius: 3, 
-              background: 'linear-gradient(135deg, #ffffff 0%, #f3f7ff 100%)', 
-              border: '1px solid', 
-              borderColor: '#e6ebf5',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.06)'
-            }}>
-              <Stack direction={{ xs: 'column', sm: 'row' }} 
-                alignItems={{ xs: 'flex-start', sm: 'center' }} 
-                justifyContent="space-between" 
-                spacing={2}
-              >
-                <Typography variant="h5" fontWeight={900} color="primary">
-                  Digital Onboarding Portal
-                </Typography>
-                <Chip 
-                  label={state.currentStep.toUpperCase()} 
-                  color="primary" 
-                  variant="filled"
-                  sx={{ 
-                    fontWeight: 600,
-                    fontSize: '0.875rem'
-                  }}
-                />
-              </Stack>
-            </Paper>
-          </Container>
+        <Box sx={{ minHeight: '100dvh', bgcolor: '#f5f7fb' }}>
           <Screen/>
         </Box>
       </LocalizationProvider>

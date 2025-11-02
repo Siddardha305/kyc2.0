@@ -69,57 +69,12 @@ export default function Payment({ state, onLogout }) {
       <StepRail activeId="payment"/>
 
       {/* Header Section */}
-      <Paper elevation={0} sx={{ 
-        p: 4, 
-        mb: 4, 
-        background: 'linear-gradient(135deg, #f5f7fa 0%, #e3e8f0 100%)',
-        borderRadius: 3
-      }}>
-        <Stack spacing={3}>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Box sx={{ 
-              width: 60, 
-              height: 60, 
-              borderRadius: '50%', 
-              backgroundColor: 'primary.main',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white'
-            }}>
-              <PaymentIcon sx={{ fontSize: 30 }} />
-            </Box>
-            <Box>
-              <Typography variant="h4" fontWeight={700} color="primary">
-                Complete Payment
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Review your details and proceed with secure payment
-              </Typography>
-            </Box>
-          </Stack>
-
-          {/* Progress Status */}
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Chip 
-              label="Final Step" 
-              color="primary" 
-              variant="filled"
-              sx={{ fontWeight: 600 }}
-            />
-            <Typography variant="body2" color="text.secondary">
-              You're almost done! Complete payment to activate your financial plan.
-            </Typography>
-          </Stack>
-        </Stack>
-      </Paper>
-
-      <Grid container spacing={4}>
+      <Grid container spacing={3}>
         {/* Member Details Section */}
         <Grid item xs={12} lg={8}>
           <Fade in timeout={600}>
             <Card sx={{ 
-              borderRadius: 3, 
+              borderRadius: 1.1, 
               boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
               border: '1px solid',
               borderColor: 'grey.100'
@@ -127,7 +82,7 @@ export default function Payment({ state, onLogout }) {
               <CardContent sx={{ p: 0 }}>
                 {/* Header */}
                 <Box sx={{ 
-                  p: 3, 
+                  p: 2, 
                   background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
                   color: 'white',
                   borderTopLeftRadius: 12,
@@ -156,11 +111,9 @@ export default function Payment({ state, onLogout }) {
                             elevation={0}
                             sx={{ 
                               p: 2,
-                              border: '1px solid',
                               borderColor: 'grey.200',
-                              borderRadius: 2,
-                              backgroundColor: 'grey.50',
-                              height: '100%'
+                              borderRadius: 1.1,
+                              height: '80%'
                             }}
                           >
                             <Stack spacing={1}>
@@ -192,7 +145,7 @@ export default function Payment({ state, onLogout }) {
           <Box sx={{ position: isMobile ? 'static' : 'sticky', top: 24 }}>
             <Fade in timeout={800}>
               <Card sx={{ 
-                borderRadius: 3, 
+                borderRadius: 1.1, 
                 boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
                 border: 'none'
               }}>
@@ -295,7 +248,7 @@ export default function Payment({ state, onLogout }) {
                         startIcon={processing ? <CircularProgress size={20} color="inherit" /> : <PaymentIcon />}
                         sx={{
                           height: 52,
-                          borderRadius: 2,
+                          borderRadius: 1.1,
                           fontSize: '1.1rem',
                           fontWeight: 700,
                           background: 'linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)',
