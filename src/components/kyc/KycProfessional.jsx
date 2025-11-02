@@ -3,7 +3,7 @@ import {
   Button, FormControl, FormControlLabel, FormHelperText, FormLabel,
   InputLabel, MenuItem, Radio, RadioGroup, Select, Stack, TextField,
   Box, Typography, Card, CardContent, Paper, Fade, Alert,
-  useTheme, useMediaQuery, CircularProgress, Grid
+  useTheme, useMediaQuery, CircularProgress, Grid, InputAdornment
 } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
@@ -20,21 +20,36 @@ export default function KycProfessional({ state, persist }) {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const kyc = state.userData.kyc || {}
+
   const [errors, setErrors] = useState({})
   const [touched, setTouched] = useState({})
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState(0)
 
-  const setK = (key, val) => persist(s => ({ 
-    ...s, 
-    userData: { 
-      ...s.userData, 
-      kyc: { 
-        ...s.userData.kyc, 
-        [key]: val 
-      } 
-    } 
-  }))
+  // Local-only buffer for "Others" so typing never touches global store
+  const [otherLocal, setOtherLocal] = useState(kyc.otherOccupation || '')
+
+  // If occupation toggles away from Others, clear local; if back, preload from global
+  useEffect(() => {
+    if (kyc.occupation === 'Others') {
+      setOtherLocal(kyc.otherOccupation || '')
+    } else {
+      setOtherLocal('')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kyc.occupation])
+
+  const setK = (key, val) =>
+    persist(s => ({
+      ...s,
+      userData: {
+        ...s.userData,
+        kyc: {
+          ...s.userData.kyc,
+          [key]: val
+        }
+      }
+    }))
 
   const occupationTypes = [
     { value: 'salaried', label: 'Salaried', icon: <WorkIcon /> },
@@ -55,17 +70,15 @@ export default function KycProfessional({ state, persist }) {
     { value: "Others", label: "Others", icon: <WorkIcon /> }
   ]
 
-  // Calculate form completion progress
+  // Progress uses local buffer when occupation is Others
   useEffect(() => {
     let completed = 0
     const total = kyc.occupation === 'Others' ? 3 : 2
-    
     if (kyc.occupationType) completed++
     if (kyc.occupation) completed++
-    if (kyc.occupation === 'Others' && kyc.otherOccupation) completed++
-    
+    if (kyc.occupation === 'Others' && otherLocal.trim()) completed++
     setProgress((completed / total) * 100)
-  }, [kyc.occupationType, kyc.occupation, kyc.otherOccupation])
+  }, [kyc.occupationType, kyc.occupation, otherLocal])
 
   const handleBlur = (field) => () => {
     setTouched(prev => ({ ...prev, [field]: true }))
@@ -81,7 +94,7 @@ export default function KycProfessional({ state, persist }) {
       e.occ = 'Please select your occupation'
       setTouched(prev => ({ ...prev, occ: true }))
     }
-    if (kyc.occupation === 'Others' && !kyc.otherOccupation) {
+    if (kyc.occupation === 'Others' && !otherLocal.trim()) {
       e.other = 'Please specify your occupation'
       setTouched(prev => ({ ...prev, other: true }))
     }
@@ -90,16 +103,19 @@ export default function KycProfessional({ state, persist }) {
   }
 
   const next = async () => {
+    // Final sync local -> global before validating/advancing
+    if (kyc.occupation === 'Others') {
+      setK('otherOccupation', otherLocal)
+    }
+
     if (!validate()) return
-    
+
     setLoading(true)
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 800))
-    
-    persist(s => ({ 
-      ...s, 
-      kycSubStepStatus: { ...s.kycSubStepStatus, 3: true }, 
-      kycSubStep: 4 
+    await new Promise(resolve => setTimeout(resolve, 300))
+    persist(s => ({
+      ...s,
+      kycSubStepStatus: { ...s.kycSubStepStatus, 3: true },
+      kycSubStep: 4
     }))
     setLoading(false)
   }
@@ -115,11 +131,12 @@ export default function KycProfessional({ state, persist }) {
 
   return (
     <Fade in timeout={600}>
-      <Box>
+      {/* prevent any parent form submit refreshing the page */}
+      <Box component="form" onSubmit={(e) => e.preventDefault()}>
         {/* Progress Header */}
-        <Paper elevation={0} sx={{ 
-          p: 3, 
-          mb: 1, 
+        <Paper elevation={0} sx={{
+          p: 3,
+          mb: 1,
           background: 'linear-gradient(135deg, #f5f7fa 0%, #e3e8f0 100%)',
           borderRadius: 1.1
         }}>
@@ -138,15 +155,15 @@ export default function KycProfessional({ state, persist }) {
                 {Math.round(progress)}%
               </Typography>
             </Stack>
-            <Box sx={{ 
-              width: '100%', 
-              height: 6, 
+            <Box sx={{
+              width: '100%',
+              height: 6,
               backgroundColor: 'grey.200',
               borderRadius: 1.1,
               overflow: 'hidden'
             }}>
-              <Box sx={{ 
-                width: `${progress}%`, 
+              <Box sx={{
+                width: `${progress}%`,
                 height: '100%',
                 background: 'linear-gradient(90deg, #1976d2 0%, #4dabf5 100%)',
                 borderRadius: 3,
@@ -161,8 +178,8 @@ export default function KycProfessional({ state, persist }) {
             <Stack spacing={1}>
               {/* Occupation Type */}
               <FormControl error={!!errors.type && touched.type}>
-                <FormLabel 
-                  sx={{ 
+                <FormLabel
+                  sx={{
                     mb: 2,
                     fontSize: '0.875rem',
                     fontWeight: 600,
@@ -171,8 +188,8 @@ export default function KycProfessional({ state, persist }) {
                 >
                   Occupation Type *
                 </FormLabel>
-                <RadioGroup 
-                  value={kyc.occupationType || ''} 
+                <RadioGroup
+                  value={kyc.occupationType || ''}
                   onChange={e => {
                     setK('occupationType', e.target.value)
                     if (errors.type) setErrors(prev => ({ ...prev, type: '' }))
@@ -225,7 +242,7 @@ export default function KycProfessional({ state, persist }) {
 
               {/* Occupation */}
               <FormControl fullWidth error={!!errors.occ && touched.occ}>
-                <InputLabel 
+                <InputLabel
                   id="occ-label"
                   sx={{
                     fontSize: '0.875rem',
@@ -234,13 +251,14 @@ export default function KycProfessional({ state, persist }) {
                 >
                   Occupation *
                 </InputLabel>
-                <Select 
-                  labelId="occ-label" 
+                <Select
+                  labelId="occ-label"
                   label="Occupation *"
                   value={kyc.occupation || ''}
                   onChange={e => {
                     setK('occupation', e.target.value)
                     if (errors.occ) setErrors(prev => ({ ...prev, occ: '' }))
+                    if (e.target.value !== 'Others') setOtherLocal('')
                   }}
                   onBlur={handleBlur('occ')}
                   sx={{
@@ -259,8 +277,8 @@ export default function KycProfessional({ state, persist }) {
                   }}
                 >
                   {occupations.map((occupation) => (
-                    <MenuItem 
-                      key={occupation.value} 
+                    <MenuItem
+                      key={occupation.value}
                       value={occupation.value}
                       sx={{ py: 1.5 }}
                     >
@@ -280,16 +298,20 @@ export default function KycProfessional({ state, persist }) {
                 )}
               </FormControl>
 
-              {/* Other Occupation Specification */}
+              {/* Other Occupation Specification (pure local while typing) */}
               {kyc.occupation === 'Others' && (
-                <TextField 
+                <TextField
+                  id="other-occupation"
                   label="Specify Your Occupation"
-                  value={kyc.otherOccupation || ''}
-                  onChange={e => {
-                    setK('otherOccupation', e.target.value)
+                  value={otherLocal}
+                  onChange={(e) => {
+                    setOtherLocal(e.target.value)         // <-- ONLY local change here
                     if (errors.other) setErrors(prev => ({ ...prev, other: '' }))
                   }}
-                  onBlur={handleBlur('other')}
+                  onBlur={() => {
+                    setTouched(prev => ({ ...prev, other: true }))
+                    setK('otherOccupation', otherLocal)   // <-- sync to global on blur
+                  }}
                   error={!!errors.other && touched.other}
                   helperText={errors.other || "Please specify your occupation details"}
                   fullWidth
@@ -300,8 +322,11 @@ export default function KycProfessional({ state, persist }) {
                   }}
                   InputProps={{
                     startAdornment: (
-                      <WorkIcon sx={{ color: 'text.secondary', mr: 1, ml: 0.5 }} />
+                      <InputAdornment position="start">
+                        <WorkIcon sx={{ color: 'text.secondary' }} />
+                      </InputAdornment>
                     ),
+                    inputProps: { autoComplete: 'off' }
                   }}
                 />
               )}
@@ -309,7 +334,7 @@ export default function KycProfessional({ state, persist }) {
               {/* Status Alert */}
               {allFieldsValid && (
                 <Fade in>
-                  <Alert 
+                  <Alert
                     severity="success"
                     variant="outlined"
                     sx={{
@@ -327,9 +352,10 @@ export default function KycProfessional({ state, persist }) {
 
               {/* Action Buttons */}
               <Stack direction="row" justifyContent="space-between" spacing={2}>
-                <Button 
-                  startIcon={<ArrowBackIcon />} 
-                  variant="outlined" 
+                <Button
+                  type="button"
+                  startIcon={<ArrowBackIcon />}
+                  variant="outlined"
                   onClick={back}
                   sx={{
                     height: 48,
@@ -340,7 +366,8 @@ export default function KycProfessional({ state, persist }) {
                 >
                   Back
                 </Button>
-                <Button 
+                <Button
+                  type="button"
                   variant="contained"
                   onClick={next}
                   disabled={loading}

@@ -23,7 +23,8 @@ import {
   Chip,
   useTheme,
   useMediaQuery,
-  CircularProgress
+  CircularProgress,
+  Divider
 } from '@mui/material'
 
 // SVG Icons as React components to avoid import blocking
@@ -57,45 +58,44 @@ const CheckCircleIcon = () => (
   </svg>
 )
 
+/* === NEW: circular checkbox icons (keeps UI but makes checkboxes circular) === */
+const CircleUncheckedIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="2"/>
+  </svg>
+)
+
+const CircleCheckedIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="9" fill="currentColor"/>
+    <path d="M9.3 12.6l1.9 1.9 3.6-3.6" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
 // Mock risk questions
 const riskQuestions = [
-  {
-    id: 1,
-    text: "What is your primary investment objective?",
-    type: 'radio',
+  { id: 1, text: "What is your primary investment objective?", type: 'radio',
     options: [
       "Capital preservation with minimal risk",
-      "Balanced growth with moderate risk", 
+      "Balanced growth with moderate risk",
       "High growth with willingness to accept higher risk",
       "Maximum returns regardless of risk"
-    ]
-  },
-  {
-    id: 2,
-    text: "How would you react if your portfolio lost 20% in a short period?",
-    type: 'radio',
+    ]},
+  { id: 2, text: "How would you react if your portfolio lost 20% in a short period?", type: 'radio',
     options: [
       "Sell all investments immediately",
       "Sell some investments to reduce risk",
       "Hold and wait for recovery",
       "Invest more to average down"
-    ]
-  },
-  {
-    id: 3,
-    text: "What is your investment time horizon?",
-    type: 'select',
+    ]},
+  { id: 3, text: "What is your investment time horizon?", type: 'select',
     options: [
       { text: "Less than 1 year", horizon: "Short term" },
       { text: "1-3 years", horizon: "Medium term" },
       { text: "3-7 years", horizon: "Long term" },
       { text: "More than 7 years", horizon: "Very long term" }
-    ]
-  },
-  {
-    id: 4,
-    text: "Which investment types are you comfortable with?",
-    type: 'checkbox',
+    ]},
+  { id: 4, text: "Which investment types are you comfortable with?", type: 'checkbox',
     options: [
       "Fixed deposits and bonds",
       "Blue-chip stocks",
@@ -103,19 +103,14 @@ const riskQuestions = [
       "Real estate",
       "Cryptocurrency",
       "Startup investments"
-    ]
-  },
-  {
-    id: 5,
-    text: "How familiar are you with investment concepts?",
-    type: 'radio',
+    ]},
+  { id: 5, text: "How familiar are you with investment concepts?", type: 'radio',
     options: [
       "Not familiar - I'm new to investing",
       "Somewhat familiar - I understand basic concepts",
       "Very familiar - I have investment experience",
       "Expert - I actively manage my investments"
-    ]
-  }
+    ]}
 ]
 
 export default function Risk({ state, persist, onLogout, navigateTo }) {
@@ -143,24 +138,9 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
   const progress = (answered / totalQuestions) * 100
 
   const getRiskProfile = (score) => {
-    if (score < 6) return { 
-      label: 'Conservative', 
-      color: 'success.main',
-      description: 'Prefers capital preservation with minimal risk',
-      icon: <SecurityIcon />
-    }
-    if (score < 11) return { 
-      label: 'Moderate', 
-      color: 'warning.main',
-      description: 'Balanced approach with moderate risk tolerance',
-      icon: <AnalyticsIcon />
-    }
-    return { 
-      label: 'Aggressive', 
-      color: 'error.main',
-      description: 'Seeks high returns with willingness to accept higher risk',
-      icon: <TrendingUpIcon />
-    }
+    if (score < 6) return { label: 'Conservative', color: 'success.main', description: 'Prefers capital preservation with minimal risk', icon: <SecurityIcon /> }
+    if (score < 11) return { label: 'Moderate', color: 'warning.main', description: 'Balanced approach with moderate risk tolerance', icon: <AnalyticsIcon /> }
+    return { label: 'Aggressive', color: 'error.main', description: 'Seeks high returns with willingness to accept higher risk', icon: <TrendingUpIcon /> }
   }
 
   const profile = getRiskProfile(score)
@@ -193,66 +173,50 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
 
   const getProfileGradient = () => {
     switch (profile.label) {
-      case 'Conservative':
-        return 'linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)'
-      case 'Moderate':
-        return 'linear-gradient(135deg, #ff9800 0%, #ffb74d 100%)'
-      case 'Aggressive':
-        return 'linear-gradient(135deg, #f44336 0%, #ef5350 100%)'
-      default:
-        return 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)'
+      case 'Conservative': return 'linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)'
+      case 'Moderate':     return 'linear-gradient(135deg, #ff9800 0%, #ffb74d 100%)'
+      case 'Aggressive':   return 'linear-gradient(135deg, #f44336 0%, #ef5350 100%)'
+      default:             return 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)'
     }
   }
 
   return (
     <Container maxWidth="xl" sx={{ py: 2 }}>
       {/* Progress Header */}
-      <Paper elevation={0} sx={{ 
-        p: 3, 
-        mb: 3, 
+      <Paper elevation={0} sx={{
+        p: 3, mb: 3,
         background: 'linear-gradient(135deg, #d9e1eb8e 0%, #e3e8f0 100%)',
         borderRadius: 1.1
       }}>
         <Stack spacing={2}>
           <Stack direction="row" spacing={2} alignItems="center">
-            <Box sx={{ 
-              width: 50, 
-              height: 50, 
-              borderRadius: '50%', 
-              backgroundColor: 'primary.main',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white'
+            <Box sx={{
+              width: 50, height: 50, borderRadius: '50%',
+              backgroundColor: 'primary.main', display: 'flex',
+              alignItems: 'center', justifyContent: 'center', color: 'white'
             }}>
               <PsychologyIcon />
             </Box>
             <Box>
-              <Typography variant="h4" fontWeight={700} color="primary">
-                Risk Assessment
-              </Typography>
+              <Typography variant="h4" fontWeight={700} color="primary">Risk Assessment</Typography>
               <Typography variant="body1" color="text.secondary">
                 Help us understand your investment preferences and risk tolerance
               </Typography>
             </Box>
           </Stack>
-          
+
           <Stack spacing={1}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Typography variant="caption" color="text.secondary">
-                Assessment Progress
-              </Typography>
+              <Typography variant="caption" color="text.secondary">Assessment Progress</Typography>
               <Typography variant="caption" fontWeight={600}>
                 {answered}/{totalQuestions} Questions • {Math.round(progress)}%
               </Typography>
             </Stack>
-            <LinearProgress 
-              variant="determinate" 
+            <LinearProgress
+              variant="determinate"
               value={progress}
-              sx={{ 
-                height: 8, 
-                borderRadius: 4,
-                backgroundColor: 'grey.200',
+              sx={{
+                height: 8, borderRadius: 4, backgroundColor: 'grey.200',
                 '& .MuiLinearProgress-bar': {
                   borderRadius: 4,
                   background: 'linear-gradient(90deg, #1976d2 0%, #4dabf5 100%)'
@@ -269,32 +233,22 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
           <Stack spacing={2}>
             {riskQuestions.map((q, index) => (
               <Fade in key={q.id} timeout={600} style={{ transitionDelay: `${index * 100}ms` }}>
-                <Card sx={{ 
-                  borderRadius: 1.1, 
+                <Card sx={{
+                  borderRadius: 1.1,
                   boxShadow: '0 8px 32px rgba(0, 0, 0, 0)',
-                  border: '1px solid',
-                  borderColor: 'grey.100',
+                  border: '1px solid', borderColor: 'grey.100',
                   transition: 'all 0.3s ease',
-                  '&:hover': {
-                    boxShadow: '0 12px 48px rgba(0,0,0,0.12)'
-                  }
+                  '&:hover': { boxShadow: '0 12px 48px rgba(0,0,0,0.12)' }
                 }}>
                   <CardContent sx={{ p: 4 }}>
                     <Stack spacing={3}>
                       {/* Question Header */}
                       <Stack direction="row" spacing={2} alignItems="flex-start">
-                        <Box sx={{ 
-                          width: 32, 
-                          height: 32, 
-                          borderRadius: '50%', 
-                          backgroundColor: 'primary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'white',
-                          fontSize: '0.875rem',
-                          fontWeight: 700,
-                          flexShrink: 0
+                        <Box sx={{
+                          width: 32, height: 32, borderRadius: '50%',
+                          backgroundColor: 'primary.main', display: 'flex',
+                          alignItems: 'center', justifyContent: 'center',
+                          color: 'white', fontSize: '0.875rem', fontWeight: 700, flexShrink: 0
                         }}>
                           {index + 1}
                         </Box>
@@ -315,23 +269,15 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
                                 <FormControlLabel
                                   value={idx}
                                   control={<Radio />}
-                                  label={
-                                    <Typography variant="body2" fontWeight={500}>
-                                      {opt}
-                                    </Typography>
-                                  }
+                                  label={<Typography variant="body2" fontWeight={500}>{opt}</Typography>}
                                   sx={{
-                                    m: 0,
-                                    p: 1.2,
+                                    m: 0, p: 1.2,
                                     border: '2px solid',
                                     borderColor: answers[q.id] === idx ? 'primary.main' : 'grey.200',
                                     borderRadius: 1.1,
                                     backgroundColor: answers[q.id] === idx ? 'primary.50' : 'transparent',
                                     transition: 'all 0.2s ease',
-                                    '&:hover': {
-                                      borderColor: 'primary.light',
-                                      backgroundColor: 'primary.50'
-                                    }
+                                    '&:hover': { borderColor: 'primary.light', backgroundColor: 'primary.50' }
                                   }}
                                 />
                               </Grid>
@@ -358,25 +304,21 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
                                             : arr.filter((x) => x !== opt)
                                           setA(q.id, next)
                                         }}
+                                        // === circular checkbox icons here ===
+                                        icon={<CircleUncheckedIcon />}
+                                        checkedIcon={<CircleCheckedIcon />}
+                                        disableRipple
                                       />
                                     }
-                                    label={
-                                      <Typography variant="body2" fontWeight={500}>
-                                        {opt}
-                                      </Typography>
-                                    }
+                                    label={<Typography variant="body2" fontWeight={500}>{opt}</Typography>}
                                     sx={{
-                                      m: 0,
-                                      p: 2,
+                                      m: 0, p: 2,
                                       border: '2px solid',
                                       borderColor: checked ? 'primary.main' : 'grey.200',
                                       borderRadius: 1.1,
                                       backgroundColor: checked ? 'primary.50' : 'transparent',
                                       transition: 'all 0.2s ease',
-                                      '&:hover': {
-                                        borderColor: 'primary.light',
-                                        backgroundColor: 'primary.50'
-                                      }
+                                      '&:hover': { borderColor: 'primary.light', backgroundColor: 'primary.50' }
                                     }}
                                   />
                                 </Grid>
@@ -425,121 +367,67 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
         {/* Profile Sidebar */}
         <Grid size={{ xs: 12, lg: 4 }}>
           <Box sx={{ position: 'sticky', top: 24 }}>
-            <Card sx={{ 
-              borderRadius: 1.1, 
-              boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-              border: 'none'
-            }}>
+            <Card sx={{ borderRadius: 1.1, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: 'none' }}>
               <CardContent sx={{ p: 0 }}>
-                {/* Profile Header */}
-                <Box sx={{ 
-                  background: getProfileGradient(),
-                  color: 'white',
-                  p: 3,
-                  borderTopLeftRadius: 12,
-                  borderTopRightRadius: 12
+                <Box sx={{
+                  background: getProfileGradient(), color: 'white', p: 3,
+                  borderTopLeftRadius: 12, borderTopRightRadius: 12
                 }}>
                   <Stack spacing={2} alignItems="center" textAlign="center">
-                    <Box sx={{ 
-                      width: 60, 
-                      height: 60, 
-                      borderRadius: '20%', 
-                      backgroundColor: 'rgba(255,255,255,0.2)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
+                    <Box sx={{
+                      width: 60, height: 60, borderRadius: '20%',
+                      backgroundColor: 'rgba(255,255,255,0.2)', display: 'flex',
+                      alignItems: 'center', justifyContent: 'center'
                     }}>
                       {profile.icon}
                     </Box>
-                    <Typography variant="h5" fontWeight={800}>
-                      {profile.label}
-                    </Typography>
-                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                      {profile.description}
-                    </Typography>
+                    <Typography variant="h5" fontWeight={800}>{profile.label}</Typography>
+                    <Typography variant="body2" sx={{ opacity: 0.9 }}>{profile.description}</Typography>
                   </Stack>
                 </Box>
 
                 <Box sx={{ p: 3 }}>
-                  {/* Score Progress */}
                   <Stack spacing={2}>
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
-                      <Typography variant="body2" fontWeight={600} color="text.secondary">
-                        Risk Score
-                      </Typography>
-                      <Typography variant="h6" fontWeight={700} color={profile.color}>
-                        {score}/15
-                      </Typography>
+                      <Typography variant="body2" fontWeight={600} color="text.secondary">Risk Score</Typography>
+                      <Typography variant="h6" fontWeight={700} color={profile.color}>{score}/15</Typography>
                     </Stack>
-                    
                     <LinearProgress
                       variant="determinate"
                       value={Math.min(100, (score / 15) * 100)}
-                      sx={{ 
-                        height: 12, 
-                        borderRadius: 6,
-                        backgroundColor: 'grey.100',
-                        '& .MuiLinearProgress-bar': {
-                          borderRadius: 6,
-                          background: getProfileGradient()
-                        }
+                      sx={{
+                        height: 12, borderRadius: 6, backgroundColor: 'grey.100',
+                        '& .MuiLinearProgress-bar': { borderRadius: 6, background: getProfileGradient() }
                       }}
                     />
-
                     <Stack direction="row" justifyContent="space-between">
-                      <Typography variant="caption" color="text.secondary">
-                        Conservative
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        Aggressive
-                      </Typography>
+                      <Typography variant="caption" color="text.secondary">Conservative</Typography>
+                      <Typography variant="caption" color="text.secondary">Aggressive</Typography>
                     </Stack>
                   </Stack>
 
-                  {/* Completion Status */}
                   <Box sx={{
-                    mt: 3,
-                    p: 2,
-                    borderRadius: 1.1,
-                    border: '1px solid',
+                    mt: 3, p: 2, borderRadius: 1.1, border: '1px solid',
                     borderColor: allAnswered ? 'success.light' : 'info.light',
                     backgroundColor: allAnswered ? 'success.50' : 'info.50'
                   }}>
                     <Stack direction="row" spacing={1} alignItems="center">
                       {allAnswered && <CheckCircleIcon />}
                       <Typography variant="body2" color={allAnswered ? 'success.dark' : 'info.dark'}>
-                        {allAnswered 
-                          ? 'All questions completed! Ready to proceed.' 
-                          : `${totalQuestions - answered} questions remaining`
-                        }
+                        {allAnswered ? 'All questions completed! Ready to proceed.' : `${totalQuestions - answered} questions remaining`}
                       </Typography>
                     </Stack>
                   </Box>
 
-                  {/* Proceed Button */}
-                  <Button 
-                    fullWidth
-                    variant="contained"
-                    size="large"
-                    onClick={handleProceed}
-                    disabled={!allAnswered || loading}
+                  <Button
+                    fullWidth variant="contained" size="large"
+                    onClick={handleProceed} disabled={!allAnswered || loading}
                     sx={{
-                      mt: 3,
-                      height: 48,
-                      borderRadius: 1.1,
-                      fontSize: '1rem',
-                      fontWeight: 600,
+                      mt: 3, height: 48, borderRadius: 1.1, fontSize: '1rem', fontWeight: 600,
                       background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
                       boxShadow: '0 4px 15px rgba(25, 118, 210, 0.3)',
-                      '&:hover': {
-                        boxShadow: '0 6px 20px rgba(25, 118, 210, 0.4)',
-                        transform: 'translateY(-1px)'
-                      },
-                      '&:disabled': {
-                        background: 'grey.300',
-                        transform: 'none',
-                        boxShadow: 'none'
-                      },
+                      '&:hover': { boxShadow: '0 6px 20px rgba(25, 118, 210, 0.4)', transform: 'translateY(-1px)' },
+                      '&:disabled': { background: 'grey.300', transform: 'none', boxShadow: 'none' },
                       transition: 'all 0.3s ease'
                     }}
                   >
@@ -548,22 +436,31 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
                         <CircularProgress size={20} color="inherit" />
                         <span>Processing...</span>
                       </Stack>
-                    ) : (
-                      'See Full Profile & Proceed'
-                    )}
+                    ) : 'See Full Profile & Proceed'}
                   </Button>
 
-                  {/* Progress Chip */}
                   {!allAnswered && (
                     <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
-                      <Chip 
-                        label={`${answered}/${totalQuestions} Answered`}
-                        color="primary"
-                        variant="outlined"
-                        size="small"
-                      />
+                      <Chip label={`${answered}/${totalQuestions} Answered`} color="primary" variant="outlined" size="small" />
                     </Stack>
                   )}
+
+                  {/* === Agreement notice (optional, lightweight, UI-consistent) === */}
+                  <Divider sx={{ my: 3 }} />
+                  <Alert severity="info" variant="outlined" sx={{ borderRadius: 1.1 }}>
+                    <Typography variant="body2" sx={{ mb: 0.5 }}>
+                      <strong>Standard warning:</strong> Investments in securities are subject to market risks. Read all documents carefully before investing.
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      SEBI registration/enlistment and NISM certification do not guarantee performance or returns.
+                    </Typography>
+                  </Alert>
+                  <Stack direction="row" justifyContent="flex-end" sx={{ mt: 1 }}>
+                    <Button size="small" onClick={() => navigateTo('sign')}>
+                      Review Agreement
+                    </Button>
+                  </Stack>
+                  {/* === /Agreement notice === */}
                 </Box>
               </CardContent>
             </Card>

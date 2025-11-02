@@ -95,7 +95,7 @@ export default function StepRail({ activeId, state }) {
   return (
     <Box sx={{ mb: 4 }}>
       {/* Progress Bar */}
-      <Stack spacing={1} sx={{ mb: 3 }}>
+      <Stack spacing={1} sx={{ mb: 2 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography variant="body2" fontWeight={600} color="text.secondary">
             Onboarding Progress
@@ -128,7 +128,7 @@ export default function StepRail({ activeId, state }) {
         spacing={isTablet ? 1 : 2} 
         sx={{ 
           overflowX: 'auto', 
-          pb: 2,
+          pb: 1,
           '&::-webkit-scrollbar': {
             height: 6,
           },
@@ -200,7 +200,7 @@ export default function StepRail({ activeId, state }) {
                 <Typography
                   variant={isTablet ? "caption" : "body2"}
                   sx={{
-                    mt: 1,
+                    mt: 2,
                     fontWeight: isActive ? 700 : 600,
                     color: isActive ? 'primary.main' : 
                            beforeActive ? 'text.primary' : 

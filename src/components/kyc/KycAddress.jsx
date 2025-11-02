@@ -52,7 +52,7 @@ export default function KycAddress({ state, persist }) {
   useEffect(() => {
     let completed = 0
     const total = 7 // all fields
-    
+
     if (local.address.trim()) completed++
     if (local.city.trim()) completed++
     if (isPincode(local.pincode)) completed++
@@ -60,7 +60,7 @@ export default function KycAddress({ state, persist }) {
     if (local.country) completed++
     if (isPhone(local.mobile)) completed++
     if (isEmail(local.email)) completed++
-    
+
     setProgress((completed / total) * 100)
   }, [local])
 
@@ -84,7 +84,7 @@ export default function KycAddress({ state, persist }) {
     if (!local.state) e.state = 'Please select your state'
     if (!isPhone(local.mobile)) e.mobile = 'Valid 10-digit mobile number is required'
     if (!isEmail(local.email)) e.email = 'Valid email address is required'
-    
+
     setTouched({
       address: true, city: true, pincode: true, state: true,
       country: true, mobile: true, email: true
@@ -95,11 +95,10 @@ export default function KycAddress({ state, persist }) {
 
   const next = async () => {
     if (!validate()) return
-    
+
     setLoading(true)
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 800))
-    
+
     persist(s => ({
       ...s,
       userData: { ...s.userData, kyc: { ...s.userData.kyc, ...local } },
@@ -117,9 +116,9 @@ export default function KycAddress({ state, persist }) {
     <Fade in timeout={600}>
       <Box>
         {/* Progress Header */}
-        <Paper elevation={0} sx={{ 
-          p: 1.6, 
-          mb: 2, 
+        <Paper elevation={0} sx={{
+          p: 1.6,
+          mb: 2,
           background: 'linear-gradient(135deg, #f5f7fa 0%, #e3e8f0 100%)',
           borderRadius: 1.1
         }}>
@@ -138,15 +137,15 @@ export default function KycAddress({ state, persist }) {
                 {Math.round(progress)}%
               </Typography>
             </Stack>
-            <Box sx={{ 
-              width: '100%', 
-              height: 6, 
+            <Box sx={{
+              width: '100%',
+              height: 6,
               backgroundColor: 'grey.200',
               borderRadius: 3,
               overflow: 'hidden'
             }}>
-              <Box sx={{ 
-                width: `${progress}%`, 
+              <Box sx={{
+                width: `${progress}%`,
                 height: '100%',
                 background: 'linear-gradient(90deg, #1976d2 0%, #4dabf5 100%)',
                 borderRadius: 3,
@@ -159,37 +158,52 @@ export default function KycAddress({ state, persist }) {
         <Card sx={{ borderRadius: 1.1, boxShadow: '0 8px 32px rgba(0, 0, 0, 0)' }}>
           <CardContent sx={{ p: 1 }}>
             <Stack spacing={2.2}>
-              {/* Address Field */}
-              <TextField
-                multiline
-                minRows={3}
-                maxRows={6}
-                label="Complete Residential Address"
-                value={local.address}
-                onChange={e => setL('address', e.target.value)}
-                onBlur={handleBlur('address')}
-                error={!!errors.address && touched.address}
-                color={getFieldColor('address')}
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1.5 }}>
-                      <HomeIcon color={getFieldColor('address')} />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 1.1,
-                    alignItems: 'flex-start'
-                  },
-                  '& .MuiInputAdornment-root': {
-                    alignItems: 'flex-start'
-                  }
-                }}
-              />
+              {/* Address Field — keep icon visually the same, move text right, prevent selection overlap */}
+              <Box sx={{ position: 'relative' }}>
+                <TextField
+                  multiline
+                  minRows={3}
+                  maxRows={6}
+                  label="Complete Residential Address"
+                  value={local.address}
+                  onChange={e => setL('address', e.target.value)}
+                  onBlur={handleBlur('address')}
+                  error={!!errors.address && touched.address}
+                  color={getFieldColor('address')}
+                  fullWidth
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 1.1,
+                      alignItems: 'flex-start',
+                    },
+                    // push content to the right so it never touches the icon
+                    '& .MuiInputBase-inputMultiline': {
+                      paddingLeft: '56px',     // was 40px; gives clear gap next to the icon
+                      paddingTop: '16px',
+                      wordBreak: 'break-word',
+                      whiteSpace: 'pre-wrap',
+                    },
+                    '& textarea': {
+                      wordBreak: 'break-word',
+                      whiteSpace: 'pre-wrap',
+                    },
+                  }}
+                />
+                {/* Icon rendered as sibling OVER the textarea so ::selection can't cover it */}
+                <HomeIcon
+                  sx={{
+                    position: 'absolute',
+                    left: 14,
+                    top: 26,                 // adjust 24–28 if your label size differs
+                    color: (t) => t.palette.primary.main,
+                    pointerEvents: 'none',
+                    zIndex: 3,               // above the textarea & selection paint
+                    opacity: 0.9,
+                  }}
+                />
+              </Box>
 
-              <Grid container spacing={1.6}>
+              <Grid container spacing={3}>
                 {/* City */}
                 <Grid item xs={12} sm={6}>
                   <TextField
@@ -207,11 +221,7 @@ export default function KycAddress({ state, persist }) {
                         </InputAdornment>
                       ),
                     }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 1.1,
-                      }
-                    }}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 1.1 } }}
                   />
                 </Grid>
 
@@ -234,11 +244,7 @@ export default function KycAddress({ state, persist }) {
                         </InputAdornment>
                       ),
                     }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 1.1,
-                      }
-                    }}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 1.1 } }}
                   />
                 </Grid>
 
@@ -262,20 +268,11 @@ export default function KycAddress({ state, persist }) {
                     }}
                     SelectProps={{
                       displayEmpty: true,
-                      MenuProps: { 
-                        PaperProps: { 
-                          style: { 
-                            maxHeight: 280,
-                            borderRadius: 1.1
-                          } 
-                        } 
+                      MenuProps: {
+                        PaperProps: { style: { maxHeight: 280, borderRadius: 12 } },
                       },
                     }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 1.1,
-                      }
-                    }}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 1.1 } }}
                   >
                     <MenuItem value="">
                       <em>Select your state</em>
@@ -293,7 +290,7 @@ export default function KycAddress({ state, persist }) {
                   <TextField
                     label="Country"
                     value={local.country}
-                    InputProps={{ 
+                    InputProps={{
                       readOnly: true,
                       startAdornment: (
                         <InputAdornment position="start">
@@ -331,11 +328,7 @@ export default function KycAddress({ state, persist }) {
                         </InputAdornment>
                       ),
                     }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 1.1,
-                      }
-                    }}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 1.1 } }}
                   />
                 </Grid>
 
@@ -356,11 +349,7 @@ export default function KycAddress({ state, persist }) {
                         </InputAdornment>
                       ),
                     }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 1.1,
-                      }
-                    }}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 1.1 } }}
                   />
                 </Grid>
               </Grid>
@@ -368,13 +357,10 @@ export default function KycAddress({ state, persist }) {
               {/* Status Alert */}
               {allFieldsValid && (
                 <Fade in>
-                  <Alert 
+                  <Alert
                     severity="success"
                     variant="outlined"
-                    sx={{
-                      borderRadius: 1.1,
-                      border: '1px solid',
-                    }}
+                    sx={{ borderRadius: 1.1, border: '1px solid' }}
                   >
                     All address details are complete and validated. Ready to proceed to the next step.
                   </Alert>
@@ -383,20 +369,15 @@ export default function KycAddress({ state, persist }) {
 
               {/* Action Buttons */}
               <Stack direction="row" justifyContent="space-between" spacing={1}>
-                <Button 
-                  startIcon={<ArrowBackIcon />} 
-                  variant="outlined" 
+                <Button
+                  startIcon={<ArrowBackIcon />}
+                  variant="outlined"
                   onClick={back}
-                  sx={{
-                    height: 48,
-                    borderRadius: 1.1,
-                    minWidth: 120,
-                    fontWeight: 600
-                  }}
+                  sx={{ height: 48, borderRadius: 1.1, minWidth: 120, fontWeight: 600 }}
                 >
                   Back
                 </Button>
-                <Button 
+                <Button
                   variant="contained"
                   onClick={next}
                   disabled={loading}

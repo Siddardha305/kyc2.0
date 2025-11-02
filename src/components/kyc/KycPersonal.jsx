@@ -125,12 +125,12 @@ export default function KycPersonal({ state, persist }) {
       <Box>
         {/* Progress Header */}
         <Paper elevation={0} sx={{ 
-          p: 2, 
+          p: 3, 
           mb: 1, 
           background: 'linear-gradient(135deg, #f5f7fa 0%, #e3e8f0 100%)',
           borderRadius: 1.1
         }}>
-          <Stack spacing={2}>
+          <Stack spacing={1}>
             <Typography variant="h5" fontWeight={600} color="primary">
               Personal Information
             </Typography>
@@ -164,10 +164,10 @@ export default function KycPersonal({ state, persist }) {
         </Paper>
 
         <Card sx={{ borderRadius: 1.1, boxShadow: '0 8px 32px rgba(0, 0, 0, 0)' }}>
-          <CardContent sx={{ p: 1 }}>
-            <Stack spacing={1.6}>
+          <CardContent sx={{ p: 3 }}>
+            <Stack spacing={1}>
               {/* Personal Details Grid */}
-              <Grid container spacing={2.5}>
+              <Grid container spacing={1.5}>
                 <Grid item xs={12} md={6}>
                   <TextField
                     label="Full Name as per PAN"

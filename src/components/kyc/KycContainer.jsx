@@ -1,9 +1,9 @@
+import React from 'react'
 import {
   Card,
   CardContent,
   CardHeader,
   Container,
-  Grid,
   Stack,
   Button,
   Box,
@@ -32,110 +32,126 @@ export default function KycContainer({ state, persist, onLogout, navigateTo }) {
     { id: 4, label: 'Review', subtitle: 'Final verification' },
   ]
 
-  const headerTitle = {
-    1: 'Personal Details',
-    2: 'Address & Contact',
-    3: 'Professional Details',
-    4: 'Review & Submit',
-  }[kycSubStep] || 'KYC Details'
+  const headerTitle =
+    {
+      1: 'Personal Details',
+      2: 'Address & Contact',
+      3: 'Professional Details',
+      4: 'Review & Submit',
+    }[kycSubStep] || 'KYC Details'
 
   const canOpen = (id) => id === 1 || !!kycSubStepStatus[id - 1]
-  const open = (id) => canOpen(id) && persist(s => ({ ...s, kycSubStep: id }))
+  const open = (id) => canOpen(id) && persist((s) => ({ ...s, kycSubStep: id }))
 
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 2, md: 5 } }}>
-      <ActiveHeader state={state} onLogout={onLogout}/>
-      <StepRail activeId="kyc"/>
+      <ActiveHeader state={state} onLogout={onLogout} />
+      <StepRail activeId="kyc" />
 
-      <Grid container spacing={3} alignItems="flex-start">
+      {/* --- Two-column layout using CSS Grid (prevents wrapping) --- */}
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: '320px 1fr' }, // left fixed, right fluid
+          gap: { xs: 2, md: 3 },
+          alignItems: 'start',
+          mt: 1,
+        }}
+      >
         {/* LEFT: pill-style sidebar */}
-        <Grid item xs={12} md={3}>
-          <Card
-            variant="outlined"
-            sx={{
-              borderRadius: 1.2,
-              p: 1.9,
-              position: { xs: 'static', md: 'sticky' },
-              top: { md: 24 },
-            }}
-          >
-            <Stack spacing={1}>
-              {steps.map((s, idx) => {
-                const active = kycSubStep === s.id
-                const done = !!kycSubStepStatus[s.id]
-                const unlocked = canOpen(s.id)
-                return (
-                  <Button
-                    key={s.id}
-                    onClick={() => open(s.id)}
-                    disabled={!unlocked}
-                    fullWidth
-                    disableElevation
-                    sx={{
-                      justifyContent: 'flex-start',
-                      textTransform: 'none',
-                      borderRadius: 1,
-                      px: 1.25,
-                      py: 1,
-                      gap: 1.25,
-                      alignItems: 'stretch',
-                      border: '1.5px solid',
-                      borderColor: active ? 'transparent' : '#175ee2',
+        <Card
+          variant="outlined"
+          sx={{
+            borderRadius: 1.2,
+            p: 1.9,
+            position: { xs: 'static', md: 'sticky' },
+            top: { md: 24 },
+          }}
+        >
+          <Stack spacing={1}>
+            {steps.map((s) => {
+              const active = kycSubStep === s.id
+              const done = !!kycSubStepStatus[s.id]
+              const unlocked = canOpen(s.id)
+              return (
+                <Button
+                  key={s.id}
+                  onClick={() => open(s.id)}
+                  disabled={!unlocked}
+                  fullWidth
+                  disableElevation
+                  sx={{
+                    justifyContent: 'flex-start',
+                    textTransform: 'none',
+                    borderRadius: 1,
+                    px: 1.25,
+                    py: 1,
+                    gap: 1.25,
+                    alignItems: 'stretch',
+                    border: '1.5px solid',
+                    borderColor: active ? 'transparent' : '#175ee2',
+                    background: active
+                      ? 'linear-gradient(90deg, #175ee2 0%, #2a6de8ff 100%)'
+                      : 'transparent',
+                    color: active ? '#fff' : '#175ee2',
+                    boxShadow: active ? '0 10px 18px rgba(23,94,226,.22)' : 'none',
+                    opacity: unlocked ? 1 : 0.55,
+                    transition: 'all .22s ease',
+                    '&:hover': {
                       background: active
-                        ? 'linear-gradient(90deg, #175ee2 0%, #2a6de8ff 100%)'
-                        : 'transparent',
-                      color: active ? '#fff' : '#175ee2',
-                      boxShadow: active ? '0 10px 18px rgba(23,94,226,.22)' : 'none',
-                      opacity: unlocked ? 1 : 0.55,
-                      transition: 'all .22s ease',
-                      '&:hover': {
-                        background: active
-                          ? 'linear-gradient(90deg, #154dd1 0%, #2a6de898 100%)'
-                          : 'rgba(23,94,226,.06)',
-                        transform: unlocked ? 'translateX(1px)' : 'none',
-                      },
-                    }}
-                  >
-                    {/* dot + connector (matches screenshot vibe) */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', py: .25 }}>
-                      <Box
-                        sx={{
-                          width: 30, height: 30, borderRadius: '50%',
-                          display: 'grid', placeItems: 'center',
-                          bgcolor: active ? 'rgba(255,255,255,.22)' : 'rgba(23,94,226,.08)',
-                          color: active ? '#fff' : (done ? 'success.main' : '#175ee2'),
-                          border: active ? '1px solid rgba(255,255,255,.35)' : '1px solid rgba(23,94,226,.28)',
-                        }}
-                      >
-                        {done ? <CheckCircleIcon fontSize="small"/> : <RadioButtonUncheckedIcon fontSize="small"/>}
-                      </Box>
+                        ? 'linear-gradient(90deg, #154dd1 0%, #2a6de898 100%)'
+                        : 'rgba(23,94,226,.06)',
+                      transform: unlocked ? 'translateX(1px)' : 'none',
+                    },
+                  }}
+                >
+                  {/* dot */}
+                  <Box sx={{ display: 'flex', alignItems: 'center', py: 0.25 }}>
+                    <Box
+                      sx={{
+                        width: 30,
+                        height: 30,
+                        borderRadius: '50%',
+                        display: 'grid',
+                        placeItems: 'center',
+                        bgcolor: active
+                          ? 'rgba(255,255,255,.22)'
+                          : 'rgba(23,94,226,.08)',
+                        color: active ? '#fff' : done ? 'success.main' : '#175ee2',
+                        border: active
+                          ? '1px solid rgba(255,255,255,.35)'
+                          : '1px solid rgba(23,94,226,.28)',
+                      }}
+                    >
+                      {done ? (
+                        <CheckCircleIcon fontSize="small" />
+                      ) : (
+                        <RadioButtonUncheckedIcon fontSize="small" />
+                      )}
                     </Box>
+                  </Box>
 
-                    {/* labels */}
-                    <Box sx={{ textAlign: 'left', flex: 1, minWidth: 0 }}>
-                      <Typography
-                        sx={{ fontWeight: 800, lineHeight: 1.1 }}
-                        noWrap
-                      >
-                        {s.label}
-                      </Typography>
-                      <Typography
-                        variant="caption"
-                        sx={{ opacity: .85, display: 'block' }}
-                        noWrap
-                      >
-                        {s.subtitle}
-                      </Typography>
-                    </Box>
-                  </Button>
-                )
-              })}
-            </Stack>
-          </Card>
-        </Grid>
+                  {/* labels */}
+                  <Box sx={{ textAlign: 'left', flex: 1, minWidth: 0 }}>
+                    <Typography sx={{ fontWeight: 800, lineHeight: 1.1 }} noWrap>
+                      {s.label}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{ opacity: 0.85, display: 'block' }}
+                      noWrap
+                    >
+                      {s.subtitle}
+                    </Typography>
+                  </Box>
+                </Button>
+              )
+            })}
+          </Stack>
+        </Card>
 
         {/* RIGHT: main card */}
-        <Grid item xs={12} md={9}>
+        <Box sx={{ minWidth: 0 }}>
           <Card
             sx={{
               borderRadius: 1,
@@ -171,14 +187,19 @@ export default function KycContainer({ state, persist, onLogout, navigateTo }) {
             </CardContent>
           </Card>
 
-          {/* mobile prev/next helpers (optional) */}
+          {/* mobile prev/next helpers */}
           {isDownMd && (
             <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
               <Button
                 variant="outlined"
                 fullWidth
                 disabled={kycSubStep === 1}
-                onClick={() => persist(s => ({ ...s, kycSubStep: Math.max(1, kycSubStep - 1) }))}
+                onClick={() =>
+                  persist((s) => ({
+                    ...s,
+                    kycSubStep: Math.max(1, kycSubStep - 1),
+                  }))
+                }
               >
                 Previous
               </Button>
@@ -186,14 +207,19 @@ export default function KycContainer({ state, persist, onLogout, navigateTo }) {
                 variant="contained"
                 fullWidth
                 disabled={kycSubStep === 4 || !kycSubStepStatus[kycSubStep]}
-                onClick={() => persist(s => ({ ...s, kycSubStep: Math.min(4, kycSubStep + 1) }))}
+                onClick={() =>
+                  persist((s) => ({
+                    ...s,
+                    kycSubStep: Math.min(4, kycSubStep + 1),
+                  }))
+                }
               >
                 Next
               </Button>
             </Box>
           )}
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Container>
   )
 }

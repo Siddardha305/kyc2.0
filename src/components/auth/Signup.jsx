@@ -36,24 +36,17 @@ export default function Signup({ state, persist, setState }) {
   useEffect(() => {
     let completed = 0
     const total = 5 // name, email, mobile, password, confirm
-
     if (form.name.trim()) completed++
     if (isEmail(form.email)) completed++
     if (isPhone(form.mobile)) completed++
     if (form.password.length >= 8) completed++
     if (form.confirm && form.password === form.confirm) completed++
-
     setProgress((completed / total) * 100)
   }, [form])
 
   // ---- draft persistence helpers ----
   const saveDraft = (next = {}) => {
-    const payload = {
-      form,
-      otp,
-      verified,
-      ...next,
-    }
+    const payload = { form, otp, verified, ...next }
     try { localStorage.setItem(DRAFT_KEY, JSON.stringify(payload)) } catch { }
   }
 
@@ -68,9 +61,7 @@ export default function Signup({ state, persist, setState }) {
     } catch { }
   }
 
-  const clearDraft = () => {
-    try { localStorage.removeItem(DRAFT_KEY) } catch { }
-  }
+  const clearDraft = () => { try { localStorage.removeItem(DRAFT_KEY) } catch { } }
 
   // Rehydrate once on mount
   useEffect(() => {
@@ -86,51 +77,38 @@ export default function Signup({ state, persist, setState }) {
   }, [state?.emailVerified, state?.mobileVerified])
 
   // Save draft whenever anything important changes
-  useEffect(() => {
-    saveDraft()
-  }, [form, otp, verified])
+  useEffect(() => { saveDraft() }, [form, otp, verified])
 
   // ---- Field handlers ----
-  const handleBlur = (field) => () => {
-    setTouched(prev => ({ ...prev, [field]: true }))
-  }
+  const handleBlur = (field) => () => setTouched(prev => ({ ...prev, [field]: true }))
 
   const handleFormChange = (field) => (e) => {
     setForm(prev => ({ ...prev, [field]: e.target.value }))
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }))
-    }
+    if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }))
   }
 
   const handleMobileChange = (e) => {
     const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10)
     setForm(prev => ({ ...prev, mobile: value }))
-    if (errors.mobile) {
-      setErrors(prev => ({ ...prev, mobile: '' }))
-    }
+    if (errors.mobile) setErrors(prev => ({ ...prev, mobile: '' }))
   }
 
   // ---- OTP send/verify ----
   const sendEmailOtp = async () => {
     setSending(p => ({ ...p, email: true }))
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500))
     setSending(p => ({ ...p, email: false }))
   }
 
   const sendMobileOtp = async () => {
     setSending(p => ({ ...p, mobile: true }))
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500))
     setSending(p => ({ ...p, mobile: false }))
   }
 
   const verifyEmailOtp = async () => {
     setVerifying(p => ({ ...p, email: true }))
-    // Simulate verification
     await new Promise(resolve => setTimeout(resolve, 800))
-
     if (otp.email === '123456') {
       persist(s => ({ ...s, emailVerified: true }))
       setVerified(v => ({ ...v, email: true }))
@@ -145,7 +123,6 @@ export default function Signup({ state, persist, setState }) {
   const verifyMobileOtp = async () => {
     setVerifying(p => ({ ...p, mobile: true }))
     await new Promise(resolve => setTimeout(resolve, 800))
-
     if (otp.mobile === '654321') {
       persist(s => ({ ...s, mobileVerified: true }))
       setVerified(v => ({ ...v, mobile: true }))
@@ -176,14 +153,10 @@ export default function Signup({ state, persist, setState }) {
     if (userExists(form.email)) errs.email = 'An account with this email already exists'
     if (userExists(form.mobile)) errs.mobile = 'An account with this phone number already exists'
 
-    setTouched({
-      name: true, email: true, mobile: true, password: true, confirm: true
-    })
+    setTouched({ name: true, email: true, mobile: true, password: true, confirm: true })
     setErrors(errs)
-
     if (Object.keys(errs).length) return
 
-    // Simulate processing
     await new Promise(resolve => setTimeout(resolve, 500))
 
     const fresh = getInitialState()
@@ -216,18 +189,14 @@ export default function Signup({ state, persist, setState }) {
 
   return (
     <Box sx={{
-      minHeight: '100vh',
-      py: { xs: 2, sm: 3, md: 4 },
+      minHeight: 'auto',
+      py: { xs: 2, sm: 3, md: 2 },
       px: { xs: 1, sm: 2 }
     }}>
-      <Box sx={{
-        maxWidth: 1200,
-        margin: '0 auto',
-        width: '100%'
-      }}>
+      <Box sx={{ maxWidth: 1200, margin: '0 auto', width: '100%' }}>
         <Stack
           direction={{ xs: 'column', md: 'row' }}
-          spacing={{ xs: 2, sm: 3, md: 4 }}
+          spacing={{ xs: 2, sm: 3, md: 0 }}
           alignItems="stretch"
           sx={{ width: '100%' }}
         >
@@ -240,7 +209,10 @@ export default function Signup({ state, persist, setState }) {
               background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
               color: '#fff',
               flex: { xs: 1, md: 0.45 },
-              borderRadius: { xs: 2, sm: 3, md: 1 },
+              borderTopRightRadius: { xs: 2, sm: 3, md: 0 },
+              borderBottomRightRadius: { xs: 2, sm: 3, md: 0 },
+              borderTopLeftRadius: { xs: 2, sm: 3, md: 15 },
+              borderBottomLeftRadius: { xs: 2, sm: 3, md: 15 },
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
@@ -260,12 +232,7 @@ export default function Signup({ state, persist, setState }) {
             }}
           >
             <Box sx={{ position: 'relative', zIndex: 1 }}>
-              <Stack
-                alignItems="center"
-                spacing={{ xs: 2, md: 3 }}
-                textAlign="center"
-                sx={{ width: '100%' }}
-              >
+              <Stack alignItems="center" spacing={{ xs: 2, md: 3 }} textAlign="center" sx={{ width: '100%' }}>
                 <Avatar sx={{
                   width: { xs: 60, md: 80 },
                   height: { xs: 60, md: 80 },
@@ -275,7 +242,7 @@ export default function Signup({ state, persist, setState }) {
                   <VerifiedIcon sx={{ fontSize: { xs: 30, md: 40 } }} />
                 </Avatar>
                 <Typography
-                  variant={isMobile ? "h5" : "h4"}
+                  variant={isMobile ? 'h5' : 'h4'}
                   fontWeight={800}
                   gutterBottom
                   sx={{ fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' } }}
@@ -283,32 +250,16 @@ export default function Signup({ state, persist, setState }) {
                   Secure Digital Onboarding
                 </Typography>
                 <Typography
-                  variant={isMobile ? "body1" : "h6"}
-                  sx={{
-                    opacity: 0.9,
-                    fontWeight: 300,
-                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.25rem' }
-                  }}
+                  variant={isMobile ? 'body1' : 'h6'}
+                  sx={{ opacity: 0.9, fontWeight: 300, fontSize: { xs: '0.9rem', sm: '1rem', md: '1.25rem' } }}
                 >
                   Join thousands of users in our secure platform
                 </Typography>
                 <Box sx={{ mt: { xs: 1, md: 2 } }}>
                   {[1, 2, 3].map((item) => (
-                    <Stack
-                      key={item}
-                      direction="row"
-                      spacing={1}
-                      alignItems="center"
-                      sx={{ mb: 1 }}
-                    >
+                    <Stack key={item} direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
                       <CheckCircleIcon sx={{ fontSize: { xs: 18, md: 20 }, opacity: 0.9 }} />
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          opacity: 0.9,
-                          fontSize: { xs: '0.8rem', sm: '0.875rem' }
-                        }}
-                      >
+                      <Typography variant="body2" sx={{ opacity: 0.9, fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                         {['Bank-level security', 'Instant verification', '24/7 Support'][item - 1]}
                       </Typography>
                     </Stack>
@@ -323,21 +274,22 @@ export default function Signup({ state, persist, setState }) {
             <Card
               sx={{
                 flex: 1,
-                borderTopRightRadius: 15,    
-                borderBottomRightRadius: 15,  
-                borderTopLeftRadius: { xs: 8, sm: 12, md: 16 },   
-                borderBottomLeftRadius: { xs: 8, sm: 12, md: 16 },
+                // square left corners on desktop so it can touch the hero
+                borderTopLeftRadius: { xs: 8, sm: 12, md: 0 },
+                borderBottomLeftRadius: { xs: 8, sm: 12, md: 0 },
+                borderTopRightRadius: 15,
+                borderBottomRightRadius: 15,
                 boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
                 border: '1px solid rgba(255,255,255,0.2)',
+                borderLeft: { md: 'none' }, // remove seam between hero and card
                 backdropFilter: 'blur(10px)',
                 minWidth: 0
               }}
-
             >
               <CardHeader
                 title={
                   <Typography
-                    variant={isMobile ? "h5" : "h4"}
+                    variant={isMobile ? 'h5' : 'h4'}
                     fontWeight={700}
                     color="primary"
                     sx={{ fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' } }}
@@ -346,46 +298,24 @@ export default function Signup({ state, persist, setState }) {
                   </Typography>
                 }
                 subheader={
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
-                  >
+                  <Typography variant="body1" color="text.secondary" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                     Complete your profile to begin the verification process
                   </Typography>
                 }
                 sx={{
                   px: { xs: 2, sm: 3 },
                   pt: { xs: 2, sm: 3 },
-                  '& .MuiCardHeader-content': {
-                    width: '100%'
-                  }
+                  '& .MuiCardHeader-content': { width: '100%' }
                 }}
               />
 
               {/* Progress Bar */}
-              <Box sx={{
-                px: { xs: 2, sm: 3 },
-                pt: { xs: 0, sm: 1 }
-              }}>
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  sx={{ mb: 1 }}
-                >
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
-                  >
+              <Box sx={{ px: { xs: 2, sm: 3 }, pt: { xs: 0, sm: 1 } }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
                     Profile Completion
                   </Typography>
-                  <Typography
-                    variant="caption"
-                    fontWeight={600}
-                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
-                  >
+                  <Typography variant="caption" fontWeight={600} sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
                     {Math.round(progress)}%
                   </Typography>
                 </Stack>
@@ -411,19 +341,16 @@ export default function Signup({ state, persist, setState }) {
                     label="Full Name"
                     value={form.name}
                     error={!!errors.name && touched.name}
-                    helperText={errors.name || (touched.name && "Your legal name as per official documents")}
+                    helperText={errors.name || (touched.name && 'Your legal name as per official documents')}
                     onChange={handleFormChange('name')}
                     onBlur={handleBlur('name')}
                     fullWidth
                     color={getFieldColor('name')}
-                    size={isMobile ? "small" : "medium"}
+                    size={isMobile ? 'small' : 'medium'}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <PersonIcon
-                            fontSize={isMobile ? "small" : "medium"}
-                            color={getFieldColor('name')}
-                          />
+                          <PersonIcon fontSize={isMobile ? 'small' : 'medium'} color={getFieldColor('name')} />
                         </InputAdornment>
                       ),
                     }}
@@ -431,11 +358,7 @@ export default function Signup({ state, persist, setState }) {
 
                   {/* Email Field with OTP */}
                   <Box>
-                    <Stack
-                      direction={{ xs: 'column', sm: 'row' }}
-                      spacing={2.5}
-                      alignItems={{ xs: 'stretch', sm: 'flex-end' }}
-                    >
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2.5} alignItems={{ xs: 'stretch', sm: 'flex-end' }}>
                       <TextField
                         label="Email Address"
                         type="email"
@@ -446,19 +369,16 @@ export default function Signup({ state, persist, setState }) {
                         onBlur={handleBlur('email')}
                         fullWidth
                         color={verified.email ? 'success' : getFieldColor('email')}
-                        size={isMobile ? "small" : "medium"}
+                        size={isMobile ? 'small' : 'medium'}
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <EmailIcon
-                                fontSize={isMobile ? "small" : "medium"}
-                                color={verified.email ? 'success' : getFieldColor('email')}
-                              />
+                              <EmailIcon fontSize={isMobile ? 'small' : 'medium'} color={verified.email ? 'success' : getFieldColor('email')} />
                             </InputAdornment>
                           ),
                         }}
                         disabled={verified.email}
-                        sx={{ 
+                        sx={{
                           '& .MuiFormHelperText-root': {
                             position: 'absolute',
                             bottom: -20,
@@ -489,11 +409,7 @@ export default function Signup({ state, persist, setState }) {
                   {!verified.email && isEmail(form.email) && (
                     <Fade in>
                       <Box>
-                        <Stack
-                          direction={{ xs: 'column', sm: 'row' }}
-                          spacing={2}
-                          alignItems={{ xs: 'stretch', sm: 'flex-end' }}
-                        >
+                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'flex-end' }}>
                           <TextField
                             label="Email Verification Code"
                             placeholder="Enter 123456"
@@ -501,8 +417,8 @@ export default function Signup({ state, persist, setState }) {
                             onChange={(e) => setOtp({ ...otp, email: e.target.value })}
                             error={!!errors.emailOtp}
                             fullWidth
-                            size={isMobile ? "small" : "medium"}
-                            sx={{ 
+                            size={isMobile ? 'small' : 'medium'}
+                            sx={{
                               flex: 1,
                               '& .MuiFormHelperText-root': {
                                 position: 'absolute',
@@ -533,11 +449,7 @@ export default function Signup({ state, persist, setState }) {
 
                   {/* Mobile Field with OTP */}
                   <Box>
-                    <Stack
-                      direction={{ xs: 'column', sm: 'row' }}
-                      spacing={2}
-                      alignItems={{ xs: 'stretch', sm: 'flex-end' }}
-                    >
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'flex-end' }}>
                       <TextField
                         label="Mobile Number"
                         value={form.mobile}
@@ -546,19 +458,16 @@ export default function Signup({ state, persist, setState }) {
                         onBlur={handleBlur('mobile')}
                         fullWidth
                         color={verified.mobile ? 'success' : getFieldColor('mobile')}
-                        size={isMobile ? "small" : "medium"}
+                        size={isMobile ? 'small' : 'medium'}
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <PhoneIcon
-                                fontSize={isMobile ? "small" : "medium"}
-                                color={verified.mobile ? 'success' : getFieldColor('mobile')}
-                              />
+                              <PhoneIcon fontSize={isMobile ? 'small' : 'medium'} color={verified.mobile ? 'success' : getFieldColor('mobile')} />
                             </InputAdornment>
                           ),
                         }}
                         disabled={verified.mobile}
-                        sx={{ 
+                        sx={{
                           '& .MuiFormHelperText-root': {
                             position: 'absolute',
                             bottom: -20,
@@ -589,21 +498,17 @@ export default function Signup({ state, persist, setState }) {
                   {!verified.mobile && isPhone(form.mobile) && (
                     <Fade in>
                       <Box>
-                        <Stack
-                          direction={{ xs: 'column', sm: 'row' }}
-                          spacing={2}
-                          alignItems={{ xs: 'stretch', sm: 'flex-end' }}
-                        >
+                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'flex-end' }}>
                           <TextField
                             label="Mobile Verification Code"
                             placeholder="Enter 654321"
                             value={otp.mobile}
                             onChange={(e) => setOtp({ ...otp, mobile: e.target.value })}
                             error={!!errors.mobileOtp}
-                            helperText={errors.mobileOtp || "Enter the code sent to your phone"}
+                            helperText={errors.mobileOtp || 'Enter the code sent to your phone'}
                             fullWidth
-                            size={isMobile ? "small" : "medium"}
-                            sx={{ 
+                            size={isMobile ? 'small' : 'medium'}
+                            sx={{
                               flex: 1,
                               '& .MuiFormHelperText-root': {
                                 position: 'absolute',
@@ -633,29 +538,22 @@ export default function Signup({ state, persist, setState }) {
                   )}
 
                   {/* Password Fields */}
-                  <Box sx={{
-                    display: 'flex',
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    gap: 2
-                  }}>
+                  <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
                     <TextField
                       type="password"
                       label="Password"
                       value={form.password}
                       error={!!errors.password && touched.password}
-                      helperText={errors.password || "Minimum 8 characters with letters and numbers"}
+                      helperText={errors.password || 'Minimum 8 characters with letters and numbers'}
                       onChange={handleFormChange('password')}
                       onBlur={handleBlur('password')}
                       fullWidth
                       color={getFieldColor('password')}
-                      size={isMobile ? "small" : "medium"}
+                      size={isMobile ? 'small' : 'medium'}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <LockIcon
-                              fontSize={isMobile ? "small" : "medium"}
-                              color={getFieldColor('password')}
-                            />
+                            <LockIcon fontSize={isMobile ? 'small' : 'medium'} color={getFieldColor('password')} />
                           </InputAdornment>
                         ),
                       }}
@@ -665,19 +563,16 @@ export default function Signup({ state, persist, setState }) {
                       label="Confirm Password"
                       value={form.confirm}
                       error={!!errors.confirm && touched.confirm}
-                      helperText={errors.confirm || "Re-enter your password to confirm"}
+                      helperText={errors.confirm || 'Re-enter your password to confirm'}
                       onChange={handleFormChange('confirm')}
                       onBlur={handleBlur('confirm')}
                       fullWidth
                       color={getFieldColor('confirm')}
-                      size={isMobile ? "small" : "medium"}
+                      size={isMobile ? 'small' : 'medium'}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <LockIcon
-                              fontSize={isMobile ? "small" : "medium"}
-                              color={getFieldColor('confirm')}
-                            />
+                            <LockIcon fontSize={isMobile ? 'small' : 'medium'} color={getFieldColor('confirm')} />
                           </InputAdornment>
                         ),
                       }}
@@ -692,9 +587,7 @@ export default function Signup({ state, persist, setState }) {
                       sx={{
                         borderRadius: 1.1,
                         border: '1px solid',
-                        '& .MuiAlert-message': {
-                          width: '100%'
-                        }
+                        '& .MuiAlert-message': { width: '100%' }
                       }}
                     >
                       <Box sx={{
@@ -704,30 +597,19 @@ export default function Signup({ state, persist, setState }) {
                         alignItems: { xs: 'stretch', sm: 'center' },
                         gap: 1
                       }}>
-                        <Typography
-                          variant="body2"
-                          sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
-                        >
+                        <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                           {canContinue
                             ? 'All set! Your account is ready to be created.'
-                            : 'Complete all fields and verify your email & mobile to continue.'
-                          }
+                            : 'Complete all fields and verify your email & mobile to continue.'}
                         </Typography>
                         {!canContinue && (
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                              sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
-                            >
+                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
                               {verified.email ? '✓ Email' : '✗ Email'} • {verified.mobile ? '✓ Mobile' : '✗ Mobile'}
                             </Typography>
                             <RefreshIcon
                               fontSize="small"
-                              sx={{
-                                cursor: 'pointer',
-                                fontSize: { xs: '0.8rem', sm: '1rem' }
-                              }}
+                              sx={{ cursor: 'pointer', fontSize: { xs: '0.8rem', sm: '1rem' } }}
                               onClick={loadDraft}
                               title="Reload saved draft"
                             />
@@ -739,10 +621,7 @@ export default function Signup({ state, persist, setState }) {
                 </Stack>
               </CardContent>
 
-              <CardActions sx={{
-                p: { xs: 2, sm: 3 },
-                pt: 0
-              }}>
+              <CardActions sx={{ p: { xs: 2, sm: 3 }, pt: 0 }}>
                 <Button
                   fullWidth
                   disabled={!canContinue}
@@ -760,9 +639,7 @@ export default function Signup({ state, persist, setState }) {
                       boxShadow: '0 6px 20px rgba(25, 118, 210, 0.4)',
                       transform: 'translateY(-1px)'
                     },
-                    '&:disabled': {
-                      background: 'grey.300'
-                    },
+                    '&:disabled': { background: 'grey.300' },
                     transition: 'all 0.3s ease'
                   }}
                 >
