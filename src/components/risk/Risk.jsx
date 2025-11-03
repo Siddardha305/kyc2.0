@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback, memo } from 'react'
 import {
   Alert,
   Button,
@@ -113,13 +113,164 @@ const riskQuestions = [
     ]}
 ]
 
+// Memoized Question Component to prevent unnecessary re-renders
+const QuestionItem = memo(({ 
+  question, 
+  answer, 
+  onAnswerChange, 
+  index 
+}) => {
+  const handleRadioChange = useCallback((event) => {
+    onAnswerChange(question.id, Number(event.target.value));
+  }, [question.id, onAnswerChange]);
+
+  const handleCheckboxChange = useCallback((option, checked) => {
+    const currentAnswers = answer || [];
+    const newAnswers = checked
+      ? [...currentAnswers, option]
+      : current.filter((x) => x !== option);
+    onAnswerChange(question.id, newAnswers);
+  }, [question.id, answer, onAnswerChange]);
+
+  const handleSelectChange = useCallback((event) => {
+    onAnswerChange(question.id, Number(event.target.value));
+  }, [question.id, onAnswerChange]);
+
+  const current = answer;
+
+  return (
+    <Fade in timeout={600} style={{ transitionDelay: `${index * 100}ms` }}>
+      <Card sx={{
+        borderRadius: 1.1,
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0)',
+        border: '1px solid', borderColor: 'grey.100',
+        transition: 'all 0.3s ease',
+        '&:hover': { boxShadow: '0 12px 48px rgba(0,0,0,0.12)' }
+      }}>
+        <CardContent sx={{ p: 4 }}>
+          <Stack spacing={3}>
+            {/* Question Header */}
+            <Stack direction="row" spacing={2} alignItems="flex-start">
+              <Box sx={{
+                width: 32, height: 32, borderRadius: '50%',
+                backgroundColor: 'primary.main', display: 'flex',
+                alignItems: 'center', justifyContent: 'center',
+                color: 'white', fontSize: '0.875rem', fontWeight: 700, flexShrink: 0
+              }}>
+                {index + 1}
+              </Box>
+              <Typography variant="h6" fontWeight={600} color="text.primary">
+                {question.text}
+              </Typography>
+            </Stack>
+
+            {/* Answer Options */}
+            {question.type === 'radio' && (
+              <RadioGroup
+                value={current ?? ''}
+                onChange={handleRadioChange}
+              >
+                <Grid container spacing={2}>
+                  {question.options.map((opt, idx) => (
+                    <Grid size={{ xs: 12, sm: 6 }} key={idx}>
+                      <FormControlLabel
+                        value={idx}
+                        control={<Radio />}
+                        label={<Typography variant="body2" fontWeight={500}>{opt}</Typography>}
+                        sx={{
+                          m: 0, p: 1.2,
+                          border: '2px solid',
+                          borderColor: current === idx ? 'primary.main' : 'grey.200',
+                          borderRadius: 1.1,
+                          backgroundColor: current === idx ? 'primary.50' : 'transparent',
+                          transition: 'all 0.2s ease',
+                          '&:hover': { borderColor: 'primary.light', backgroundColor: 'primary.50' }
+                        }}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </RadioGroup>
+            )}
+
+            {question.type === 'checkbox' && (
+              <FormGroup>
+                <Grid container spacing={2}>
+                  {question.options.map((opt) => {
+                    const arr = current || [];
+                    const checked = arr.includes(opt);
+                    return (
+                      <Grid size={{ xs: 12, sm: 6 }} key={opt}>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={checked}
+                              onChange={(e) => handleCheckboxChange(opt, e.target.checked)}
+                              icon={<CircleUncheckedIcon />}
+                              checkedIcon={<CircleCheckedIcon />}
+                              disableRipple
+                            />
+                          }
+                          label={<Typography variant="body2" fontWeight={500}>{opt}</Typography>}
+                          sx={{
+                            m: 0, p: 2,
+                            border: '2px solid',
+                            borderColor: checked ? 'primary.main' : 'grey.200',
+                            borderRadius: 1.1,
+                            backgroundColor: checked ? 'primary.50' : 'transparent',
+                            transition: 'all 0.2s ease',
+                            '&:hover': { borderColor: 'primary.light', backgroundColor: 'primary.50' }
+                          }}
+                        />
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              </FormGroup>
+            )}
+
+            {question.type === 'select' && (
+              <FormControl fullWidth>
+                <Select
+                  value={current ?? ''}
+                  onChange={handleSelectChange}
+                  displayEmpty
+                  sx={{ borderRadius: 1.1 }}
+                >
+                  <MenuItem value="">
+                    <em>Select an option</em>
+                  </MenuItem>
+                  {question.options.map((opt, idx) => (
+                    <MenuItem key={idx} value={idx} sx={{ py: 1.5 }}>
+                      <Stack>
+                        <Typography variant="body2" fontWeight={500}>
+                          {opt.text || opt}
+                        </Typography>
+                        {opt.horizon && (
+                          <Typography variant="caption" color="text.secondary">
+                            {opt.horizon}
+                          </Typography>
+                        )}
+                      </Stack>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+          </Stack>
+        </CardContent>
+      </Card>
+    </Fade>
+  );
+});
+
 export default function Risk({ state, persist, onLogout, navigateTo }) {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const [answers, setAnswers] = useState(state.userData.riskAnswers || {})
   const [loading, setLoading] = useState(false)
 
-  const calcScore = (a) => {
+  const calcScore = useCallback((a) => {
     let s = 0
     let answered = 0
     riskQuestions.forEach((q) => {
@@ -131,54 +282,58 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
       }
     })
     return { score: s, answered }
-  }
+  }, [])
 
   const { score, answered } = calcScore(answers)
   const totalQuestions = riskQuestions.length
   const progress = (answered / totalQuestions) * 100
 
-  const getRiskProfile = (score) => {
+  const getRiskProfile = useCallback((score) => {
     if (score < 6) return { label: 'Conservative', color: 'success.main', description: 'Prefers capital preservation with minimal risk', icon: <SecurityIcon /> }
     if (score < 11) return { label: 'Moderate', color: 'warning.main', description: 'Balanced approach with moderate risk tolerance', icon: <AnalyticsIcon /> }
     return { label: 'Aggressive', color: 'error.main', description: 'Seeks high returns with willingness to accept higher risk', icon: <TrendingUpIcon /> }
-  }
+  }, [])
 
   const profile = getRiskProfile(score)
 
-  const setA = (id, val) => {
-    const next = { ...answers, [id]: val }
-    setAnswers(next)
-    const { score: nextScore } = calcScore(next)
-    const nextProfile = getRiskProfile(nextScore)
+  const handleAnswerChange = useCallback((id, value) => {
+    setAnswers(prev => {
+      const next = { ...prev, [id]: value };
+      return next;
+    });
+  }, []);
+
+  // Only persist when proceeding, not on every answer change
+  const handleProceed = async () => {
+    if (!allAnswered) return;
+    
+    // Persist all answers at once before proceeding
     persist((s) => ({
       ...s,
       userData: {
         ...s.userData,
-        riskAnswers: next,
-        riskScore: nextScore,
-        riskProfile: nextProfile.label,
+        riskAnswers: answers,
+        riskScore: score,
+        riskProfile: profile.label,
       },
-    }))
-  }
+    }));
+    
+    setLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 800));
+    navigateTo('assessment');
+    setLoading(false);
+  };
 
   const allAnswered = answered === totalQuestions
 
-  const handleProceed = async () => {
-    if (!allAnswered) return
-    setLoading(true)
-    await new Promise(resolve => setTimeout(resolve, 800))
-    navigateTo('assessment')
-    setLoading(false)
-  }
-
-  const getProfileGradient = () => {
+  const getProfileGradient = useCallback(() => {
     switch (profile.label) {
       case 'Conservative': return 'linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)'
       case 'Moderate':     return 'linear-gradient(135deg, #ff9800 0%, #ffb74d 100%)'
       case 'Aggressive':   return 'linear-gradient(135deg, #f44336 0%, #ef5350 100%)'
       default:             return 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)'
     }
-  }
+  }, [profile.label]);
 
   return (
     <Container maxWidth="xl" sx={{ py: 2 }}>
@@ -231,135 +386,14 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
         {/* Questions Section */}
         <Grid size={{ xs: 12, lg: 8 }}>
           <Stack spacing={2}>
-            {riskQuestions.map((q, index) => (
-              <Fade in key={q.id} timeout={600} style={{ transitionDelay: `${index * 100}ms` }}>
-                <Card sx={{
-                  borderRadius: 1.1,
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0)',
-                  border: '1px solid', borderColor: 'grey.100',
-                  transition: 'all 0.3s ease',
-                  '&:hover': { boxShadow: '0 12px 48px rgba(0,0,0,0.12)' }
-                }}>
-                  <CardContent sx={{ p: 4 }}>
-                    <Stack spacing={3}>
-                      {/* Question Header */}
-                      <Stack direction="row" spacing={2} alignItems="flex-start">
-                        <Box sx={{
-                          width: 32, height: 32, borderRadius: '50%',
-                          backgroundColor: 'primary.main', display: 'flex',
-                          alignItems: 'center', justifyContent: 'center',
-                          color: 'white', fontSize: '0.875rem', fontWeight: 700, flexShrink: 0
-                        }}>
-                          {index + 1}
-                        </Box>
-                        <Typography variant="h6" fontWeight={600} color="text.primary">
-                          {q.text}
-                        </Typography>
-                      </Stack>
-
-                      {/* Answer Options */}
-                      {q.type === 'radio' && (
-                        <RadioGroup
-                          value={answers[q.id] ?? ''}
-                          onChange={(e) => setA(q.id, Number(e.target.value))}
-                        >
-                          <Grid container spacing={2}>
-                            {q.options.map((opt, idx) => (
-                              <Grid size={{ xs: 12, sm: 6 }} key={idx}>
-                                <FormControlLabel
-                                  value={idx}
-                                  control={<Radio />}
-                                  label={<Typography variant="body2" fontWeight={500}>{opt}</Typography>}
-                                  sx={{
-                                    m: 0, p: 1.2,
-                                    border: '2px solid',
-                                    borderColor: answers[q.id] === idx ? 'primary.main' : 'grey.200',
-                                    borderRadius: 1.1,
-                                    backgroundColor: answers[q.id] === idx ? 'primary.50' : 'transparent',
-                                    transition: 'all 0.2s ease',
-                                    '&:hover': { borderColor: 'primary.light', backgroundColor: 'primary.50' }
-                                  }}
-                                />
-                              </Grid>
-                            ))}
-                          </Grid>
-                        </RadioGroup>
-                      )}
-
-                      {q.type === 'checkbox' && (
-                        <FormGroup>
-                          <Grid container spacing={2}>
-                            {q.options.map((opt) => {
-                              const arr = answers[q.id] || []
-                              const checked = arr.includes(opt)
-                              return (
-                                <Grid size={{ xs: 12, sm: 6 }} key={opt}>
-                                  <FormControlLabel
-                                    control={
-                                      <Checkbox
-                                        checked={checked}
-                                        onChange={(e) => {
-                                          const next = e.target.checked
-                                            ? [...arr, opt]
-                                            : arr.filter((x) => x !== opt)
-                                          setA(q.id, next)
-                                        }}
-                                        // === circular checkbox icons here ===
-                                        icon={<CircleUncheckedIcon />}
-                                        checkedIcon={<CircleCheckedIcon />}
-                                        disableRipple
-                                      />
-                                    }
-                                    label={<Typography variant="body2" fontWeight={500}>{opt}</Typography>}
-                                    sx={{
-                                      m: 0, p: 2,
-                                      border: '2px solid',
-                                      borderColor: checked ? 'primary.main' : 'grey.200',
-                                      borderRadius: 1.1,
-                                      backgroundColor: checked ? 'primary.50' : 'transparent',
-                                      transition: 'all 0.2s ease',
-                                      '&:hover': { borderColor: 'primary.light', backgroundColor: 'primary.50' }
-                                    }}
-                                  />
-                                </Grid>
-                              )
-                            })}
-                          </Grid>
-                        </FormGroup>
-                      )}
-
-                      {q.type === 'select' && (
-                        <FormControl fullWidth>
-                          <Select
-                            value={answers[q.id] ?? ''}
-                            onChange={(e) => setA(q.id, Number(e.target.value))}
-                            displayEmpty
-                            sx={{ borderRadius: 1.1 }}
-                          >
-                            <MenuItem value="">
-                              <em>Select an option</em>
-                            </MenuItem>
-                            {q.options.map((opt, idx) => (
-                              <MenuItem key={idx} value={idx} sx={{ py: 1.5 }}>
-                                <Stack>
-                                  <Typography variant="body2" fontWeight={500}>
-                                    {opt.text || opt}
-                                  </Typography>
-                                  {opt.horizon && (
-                                    <Typography variant="caption" color="text.secondary">
-                                      {opt.horizon}
-                                    </Typography>
-                                  )}
-                                </Stack>
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      )}
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Fade>
+            {riskQuestions.map((question, index) => (
+              <QuestionItem
+                key={question.id}
+                question={question}
+                answer={answers[question.id]}
+                onAnswerChange={handleAnswerChange}
+                index={index}
+              />
             ))}
           </Stack>
         </Grid>
@@ -445,7 +479,6 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
                     </Stack>
                   )}
 
-                  {/* === Agreement notice (optional, lightweight, UI-consistent) === */}
                   <Divider sx={{ my: 3 }} />
                   <Alert severity="info" variant="outlined" sx={{ borderRadius: 1.1 }}>
                     <Typography variant="body2" sx={{ mb: 0.5 }}>
@@ -455,12 +488,6 @@ export default function Risk({ state, persist, onLogout, navigateTo }) {
                       SEBI registration/enlistment and NISM certification do not guarantee performance or returns.
                     </Typography>
                   </Alert>
-                  <Stack direction="row" justifyContent="flex-end" sx={{ mt: 1 }}>
-                    {/* <Button size="small" onClick={() => navigateTo('sign')}>
-                      Review Agreement
-                    </Button> */}
-                  </Stack>
-                  {/* === /Agreement notice === */}
                 </Box>
               </CardContent>
             </Card>

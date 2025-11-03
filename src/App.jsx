@@ -229,9 +229,9 @@ function Assessment({ state, navigateTo, onLogout }) {
             {/* Progress Indicator */}
             {!scrolled && (
               <Box sx={{ mt: 2, textAlign: 'center' }}>
-                <Typography variant="caption" color="text.secondary">
+                {/* <Typography variant="caption" color="text.secondary">
                   📜 Scroll to the bottom to read the entire document
-                </Typography>
+                </Typography> */}
               </Box>
             )}
           </Box>
